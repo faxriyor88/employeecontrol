@@ -6,6 +6,7 @@ import com.example.employeecontrol.dto.DistrictDTO;
 import com.example.employeecontrol.dto.ManagerDto;
 import com.example.employeecontrol.dto.RoleDTO;
 import com.example.employeecontrol.model.Region;
+import com.example.employeecontrol.repository.AttachmentRepository;
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.service.EmployeeService;
 import com.example.employeecontrol.service.ServiceForSuperAdmin;
@@ -24,6 +25,8 @@ public class SuperAdminController {
     ServiceForSuperAdmin serviceForSuperAdmin;
     @Autowired
     EmployeeService employeeService;
+    @Autowired
+    AttachmentRepository attachmentRepository;
 
     @CheckPermission(permission = "ADD", permission1 = "1")
     @PostMapping("/addregion")
@@ -169,5 +172,9 @@ public class SuperAdminController {
         File file=new File("informationaboutemployee");
         File file1=new File("imagelocation");
         return "infro="+file.list().length+",  image="+file1.list().length;
+    }
+    @GetMapping("/viewattach")
+    public ResponseEntity<?> getattach(){
+        return ResponseEntity.ok(attachmentRepository.findAll());
     }
 }

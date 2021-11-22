@@ -50,7 +50,7 @@ public class AttachmentService {
             String[] split = image.getOriginalFilename().split("\\.");
             savefileimage = savefileimage + "." + split[split.length - 1];
             Path path = Paths.get("imagelocation/" + savefileimage);
-            String imageUrl = "../imagelocation/" + savefileimage;
+            String imageUrl = "https://empproba.herokuapp.com/imagelocation/" + savefileimage;
             Files.copy(image.getInputStream(), path);
             Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), savefileimage, imageUrl, employee);
             attachmentRepository.save(attachment);
@@ -63,13 +63,12 @@ public class AttachmentService {
     //====== Xodim rasmini tahrirlash =====
     public ApiResponse uploadEmployeeImageEdit(Attachment attachment1, Employee employee, MultipartFile image) throws IOException {
         try {
-
             Attachment attachment = attachment1;
             String savefileimage = UUID.randomUUID().toString();
             String[] split = image.getOriginalFilename().split("\\.");
             savefileimage = savefileimage + "." + split[split.length - 1];
             Path path = Paths.get("imagelocation/" + savefileimage);
-            String imageUrl = "../imagelocation/" + savefileimage;
+            String imageUrl = "https://empproba.herokuapp.com/imagelocation/" + savefileimage;
             Files.copy(image.getInputStream(), path);
             attachment.setSaveimagename(savefileimage);
             attachment.setEmployee(employee);
