@@ -104,13 +104,13 @@ public class SuperAdminController {
         return ResponseEntity.status(404).body(new ApiResponse("Sizda bunday huquq yo'q", false));
     }
 
-    @CheckPermission(permission = "VIEW", permission1 = "1")
+  //  @CheckPermission(permission = "VIEW", permission1 = "1")
     @GetMapping("/getmanager")
     public ResponseEntity<?> getmanag() {
-        if (employeeService.getManagerInSystem().getRole().getName().equals("SUPERADMIN")) {
+      //  if (employeeService.getManagerInSystem().getRole().getName().equals("SUPERADMIN")) {
         return ResponseEntity.ok(serviceForSuperAdmin.getAllManagers());
-        }
-        return ResponseEntity.status(404).body(new ApiResponse("Sizda bunday huquq yo'q", false));
+    //    }
+      //  return ResponseEntity.status(404).body(new ApiResponse("Sizda bunday huquq yo'q", false));
     }
     //=======================================
 
