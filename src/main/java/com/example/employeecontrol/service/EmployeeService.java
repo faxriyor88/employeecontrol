@@ -8,6 +8,7 @@ import com.example.employeecontrol.repository.*;
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.response.DeleteImage;
 import com.example.employeecontrol.response.RegionAppropriateDistrict;
+import com.example.employeecontrol.response.UploadImageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -60,9 +61,11 @@ public class EmployeeService {
                                     employeeDto.getDavlatmukofotibilantaqdirlanganligiqanaqa(), employeeDto.getSaylovorganiazosi(),
                                     employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(),
                                     employeeDto.getMehnatfaoliyati(), employee);
-                            employeeRepository.save(employee);
-                            ApiResponse apiResponse = attachmentService.uploadEmployeeImage(image, employee);
-                            if (apiResponse.isSuccess()) {
+                           UploadImageResponse imageResponse=attachmentService.uploadEmployeeImage(image);
+                            if (imageResponse.getResponse().isSuccess()) {
+                                employeeRepository.save(employee);
+                                Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(),imageResponse.getImageUrl(),employee);
+                                attachmentRepository.save(attachment);
                                 employeeAdditionalRepository.save(employeeAdditional);
                                 for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
                                     InformationAboutRelative informationAboutRelative = new InformationAboutRelative(
@@ -72,7 +75,7 @@ public class EmployeeService {
                                 }
                                 return new ApiResponse("Saqlandi", true);
                             } else {
-                                return apiResponse;
+                                return imageResponse.getResponse();
                             }
                         } else {
                             return new ApiResponse("Bunday fullname bor", false);
@@ -104,9 +107,12 @@ public class EmployeeService {
                                         employeeDto.getDavlatmukofotibilantaqdirlanganligiqanaqa(), employeeDto.getSaylovorganiazosi(),
                                         employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(),
                                         employeeDto.getMehnatfaoliyati(), employee);
-                                employeeRepository.save(employee);
-                                ApiResponse apiResponse = attachmentService.uploadEmployeeImage(image, employee);
-                                if (apiResponse.isSuccess()) {
+
+                                UploadImageResponse imageResponse=attachmentService.uploadEmployeeImage(image);
+                                if (imageResponse.getResponse().isSuccess()) {
+                                    employeeRepository.save(employee);
+                                    Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(),  employee);
+                                    attachmentRepository.save(attachment);
                                     employeeAdditionalRepository.save(employeeAdditional);
                                     for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
                                         InformationAboutRelative informationAboutRelative = new InformationAboutRelative(
@@ -117,7 +123,7 @@ public class EmployeeService {
 
                                     return new ApiResponse("Saqlandi", true);
                                 } else {
-                                    return apiResponse;
+                                    return imageResponse.getResponse();
                                 }
                             } else {
                                 return new ApiResponse("Bunday fullname bor", false);

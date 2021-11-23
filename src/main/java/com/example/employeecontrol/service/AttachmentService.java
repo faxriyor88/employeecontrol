@@ -5,6 +5,7 @@ import com.example.employeecontrol.repository.*;
 
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.response.DeleteImage;
+import com.example.employeecontrol.response.UploadImageResponse;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.Units;
@@ -44,7 +45,7 @@ public class AttachmentService {
     EmployeeService employeeService;
 
     //====== Xodim rasmini bazaga yuklash ======
-    public ApiResponse uploadEmployeeImage(MultipartFile image, Employee employee) throws IOException {
+    public UploadImageResponse uploadEmployeeImage(MultipartFile image) throws IOException {
         try {
             String savefileimage = UUID.randomUUID().toString();
             String[] split = image.getOriginalFilename().split("\\.");
@@ -52,11 +53,9 @@ public class AttachmentService {
             Path path = Paths.get("imagelocation/" + savefileimage);
             String imageUrl = "https://empproba.herokuapp.com/imagelocation/" + savefileimage;
             Files.copy(image.getInputStream(), path);
-            Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), savefileimage, imageUrl, employee);
-            attachmentRepository.save(attachment);
-            return new ApiResponse("Success", true);
+            return new UploadImageResponse(new ApiResponse("Success", true),imageUrl,savefileimage);
         } catch (Exception e) {
-            return new ApiResponse("Xodim rasmini bazaga yuklab bo'lmadi", false);
+            return new UploadImageResponse(new ApiResponse("Xodim rasmini bazaga yuklab bo'lmadi", false),null,null);
         }
     }
 
@@ -89,7 +88,6 @@ public class AttachmentService {
             Optional<Attachment> optionalAttachment = attachmentRepository.findByEmployeeId(employeeId);
             if (optionalAttachment.isPresent()) {
                 try {
-
                     Attachment attachment = optionalAttachment.get();
                     Employee employee = employeeRepository.getById(employeeId);
                     File file = new File("informationaboutemployee/" + employee.getFullname() + attachment.getId() + ".docx");
