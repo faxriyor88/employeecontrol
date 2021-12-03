@@ -6,9 +6,7 @@ import com.example.employeecontrol.repository.*;
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.response.DeleteImage;
 import com.example.employeecontrol.response.UploadImageResponse;
-import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,6 +42,7 @@ public class AttachmentService {
     @Autowired
     EmployeeService employeeService;
 
+
     //====== Xodim rasmini bazaga yuklash ======
     public UploadImageResponse uploadEmployeeImage(MultipartFile image) throws IOException {
         try {
@@ -53,9 +52,9 @@ public class AttachmentService {
             Path path = Paths.get("imagelocation/" + savefileimage);
             String imageUrl = "https://empproba.herokuapp.com/imagelocation/" + savefileimage;
             Files.copy(image.getInputStream(), path);
-            return new UploadImageResponse(new ApiResponse("Success", true),imageUrl,savefileimage);
+            return new UploadImageResponse(new ApiResponse("Success", true), imageUrl, savefileimage);
         } catch (Exception e) {
-            return new UploadImageResponse(new ApiResponse("Xodim rasmini bazaga yuklab bo'lmadi", false),null,null);
+            return new UploadImageResponse(new ApiResponse("Xodim rasmini bazaga yuklab bo'lmadi", false), null, null);
         }
     }
 
@@ -91,7 +90,8 @@ public class AttachmentService {
                     Attachment attachment = optionalAttachment.get();
                     Employee employee = employeeRepository.getById(employeeId);
                     File file = new File("informationaboutemployee/" + employee.getFullname() + attachment.getId() + ".docx");
-                    file.delete();
+                    boolean isSuccess = file.delete();
+                    System.out.println(isSuccess);
                     EmployeeAdditional employeeAdditional = employeeAdditionalRepository.findByEmployeeId(employeeId);
                     List<InformationAboutRelative> informationAboutRelatives = informationAboutRelativeRepository.findAllByEmployeeId(employeeId);
                     file.createNewFile();
@@ -100,6 +100,8 @@ public class AttachmentService {
                     response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
                     FileInputStream fileInputStream = new FileInputStream("informationaboutemployee/" + file.getName());
                     FileCopyUtils.copy(fileInputStream, response.getOutputStream());
+                    File file1 = new File("informationaboutemployee/" + employee.getFullname() + attachment.getId() + ".docx");
+                    file1.delete();
                     return true;
                 } catch (Exception e) {
                     return false;
@@ -126,7 +128,7 @@ public class AttachmentService {
                             response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
                             response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
                             FileInputStream fileInputStream = new FileInputStream("informationaboutemployee/" + file.getName());
-                           FileCopyUtils.copy(fileInputStream,response.getOutputStream());
+                            FileCopyUtils.copy(fileInputStream, response.getOutputStream());
 
                             return true;
                         } catch (Exception e) {

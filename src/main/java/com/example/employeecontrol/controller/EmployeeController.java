@@ -57,7 +57,7 @@ public class EmployeeController {
     @DeleteMapping("/deleteemployee/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable UUID id){
         ApiResponse apiResponse = employeeService.deleteEmployee(id);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:400).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess()?200:404).body(apiResponse);
     }
 
     // DIRECTOR VA REGION XODIM HAQIDA QO'SHIMCHA MA'LUMOT OLISHI

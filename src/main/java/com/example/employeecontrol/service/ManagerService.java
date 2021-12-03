@@ -31,8 +31,8 @@ public class ManagerService {
             Role role = optionalRole.get();
             if (optionalRole.get().getName().equals("SUPERADMIN")) {
                 Manager manager = new Manager(managerDto.getName(), managerDto.getSurname(), managerDto.getUsername(), passwordEncoder.encode(managerDto.getPassword()), role, null, managerDto.isEnabled());
-                 managerRepository.save(manager);
-                  return new ApiResponse("Saqlandi",true);
+                managerRepository.save(manager);
+                return new ApiResponse("Saqlandi", true);
             } else {
                 Optional<Company> optionalCompany = companyRepository.findById(managerDto.getCompanyId());
                 if (optionalCompany.isPresent()) {

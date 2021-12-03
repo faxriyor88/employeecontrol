@@ -1,6 +1,7 @@
 package com.example.employeecontrol.controller;
 
 import com.example.employeecontrol.aop.CheckPermission;
+import com.example.employeecontrol.model.enums.Permission;
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
