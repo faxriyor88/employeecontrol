@@ -23,26 +23,26 @@ public class DownloadEmployeeAboutInformationController {
     AttachmentService attachmentService;
 
     //======== Xodim ma'lumotlarini docx qilib yuklab olish ======
-//    @CheckPermission(permission = "DOWNLOAD", permission1 = "DOWNLOAD_REGION")
-//    @GetMapping("/employeeaboutinformation/{id}")
-//    public void downloadEmployee(@PathVariable UUID id, HttpServletResponse response) throws IOException {
-//        ApiResponse apiResponse = attachmentService.downloadEmployee(id, response);
-//        if (apiResponse.isSuccess()) {
-//            System.out.println(apiResponse.getMessage());
-//            response.setStatus(201);
-//        } else {
-//            System.out.println(apiResponse.getMessage());
-//            response.setStatus(404);
-//        }
-//    }
     @CheckPermission(permission = "DOWNLOAD", permission1 = "DOWNLOAD_REGION")
     @GetMapping("/employeeaboutinformation/{id}")
-    public ResponseEntity<?> downloadEmployee(@PathVariable UUID id, HttpServletResponse response) throws IOException {
+    public void downloadEmployee(@PathVariable UUID id, HttpServletResponse response) throws IOException {
         ApiResponse apiResponse = attachmentService.downloadEmployee(id, response);
         if (apiResponse.isSuccess()) {
-            return ResponseEntity.status(201).body(apiResponse.getMessage());
+            System.out.println(apiResponse.getMessage());
+            response.setStatus(201);
         } else {
-            return ResponseEntity.status(404).body(apiResponse.getMessage());
+            System.out.println(apiResponse.getMessage());
+            response.setStatus(404);
         }
     }
+//    @CheckPermission(permission = "DOWNLOAD", permission1 = "DOWNLOAD_REGION")
+//    @GetMapping("/employeeaboutinformation/{id}")
+//    public ResponseEntity<?> downloadEmployee(@PathVariable UUID id, HttpServletResponse response) throws IOException {
+//        ApiResponse apiResponse = attachmentService.downloadEmployee(id, response);
+//        if (apiResponse.isSuccess()) {
+//            return ResponseEntity.status(201).body(apiResponse.getMessage());
+//        } else {
+//            return ResponseEntity.status(404).body(apiResponse.getMessage());
+//        }
+//    }
 }
