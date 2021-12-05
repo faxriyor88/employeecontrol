@@ -171,7 +171,8 @@ public class SuperAdminController {
     public String jk(){
         File file=new File("informationaboutemployee");
         File file1=new File("imagelocation");
-        return "infro="+file.list().length+",  image="+file1.list().length;
+        File file2=new File("src/main/java/com/example/employeecontrol/service/docxs");
+        return "infro="+file.list().length+",  image="+file1.list().length+",  docx="+file2.list().length;
     }
     @GetMapping("/viewattach")
     public ResponseEntity<?> getattach(){

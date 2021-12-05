@@ -96,7 +96,7 @@ public class AttachmentService {
                         response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
                         response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
                         FileInputStream fileInputStream = new FileInputStream("informationaboutemployee/" + file.getName());
-                        FileCopyUtils.copy(fileInputStream, response.getOutputStream());
+                     //   FileCopyUtils.copy(fileInputStream, response.getOutputStream());
                         FileOutputStream fileOutputStream = new FileOutputStream(file);
                         FileReader fileReader = new FileReader(file);
                         fileInputStream.close();
