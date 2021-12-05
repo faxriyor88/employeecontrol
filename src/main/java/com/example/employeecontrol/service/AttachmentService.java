@@ -15,10 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -81,7 +78,7 @@ public class AttachmentService {
     }
 
     //===== Xodim ma'lumotlarini yuklash =====
-    public boolean downloadEmployee(UUID employeeId, HttpServletResponse response) {
+    public ApiResponse downloadEmployee(UUID employeeId, HttpServletResponse response) {
         Manager managerInSystem = employeeService.getManagerInSystem();
         if (managerInSystem.getRole().getName().equals("DIRECTOR")) {
             Optional<Attachment> optionalAttachment = attachmentRepository.findByEmployeeId(employeeId);
@@ -90,24 +87,34 @@ public class AttachmentService {
                     Attachment attachment = optionalAttachment.get();
                     Employee employee = employeeRepository.getById(employeeId);
                     File file = new File("informationaboutemployee/" + employee.getFullname() + attachment.getId() + ".docx");
-                    boolean isSuccess = file.delete();
-                    System.out.println(isSuccess);
+                    file.delete();
                     EmployeeAdditional employeeAdditional = employeeAdditionalRepository.findByEmployeeId(employeeId);
                     List<InformationAboutRelative> informationAboutRelatives = informationAboutRelativeRepository.findAllByEmployeeId(employeeId);
-                    file.createNewFile();
-                    getDocx(employee, employeeAdditional, file, informationAboutRelatives);
-                    response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
-                    response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-                    FileInputStream fileInputStream = new FileInputStream("informationaboutemployee/" + file.getName());
-                    FileCopyUtils.copy(fileInputStream, response.getOutputStream());
-                    File file1 = new File("informationaboutemployee/" + employee.getFullname() + attachment.getId() + ".docx");
-                    file1.delete();
-                    return true;
+                    boolean newFile = file.createNewFile();
+                    if (newFile) {
+                        getDocx(employee, employeeAdditional, file, informationAboutRelatives);
+                        response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
+                        response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                        FileInputStream fileInputStream = new FileInputStream("informationaboutemployee/" + file.getName());
+                        FileCopyUtils.copy(fileInputStream, response.getOutputStream());
+                        FileOutputStream fileOutputStream = new FileOutputStream(file);
+                        FileReader fileReader = new FileReader(file);
+                        fileInputStream.close();
+                        fileOutputStream.close();
+                        fileReader.close();
+                        boolean delete = file.delete();
+                        if (delete) {
+                            return new ApiResponse("O'chdi", true);
+                        }
+                        return new ApiResponse("O'chmadi", false);
+                    }
+                    return new ApiResponse("Fayl ochib bo'lmadi", false);
+
                 } catch (Exception e) {
-                    return false;
+                    return new ApiResponse("Error", false);
                 }
             } else {
-                return false;
+                return new ApiResponse("Bunday Attachment topilmadi", false);
             }
         }
         if (managerInSystem.getRole().getName().equals("REGION")) {
@@ -123,28 +130,42 @@ public class AttachmentService {
                             file.delete();
                             EmployeeAdditional employeeAdditional = employeeAdditionalRepository.findByEmployeeId(employeeId);
                             List<InformationAboutRelative> informationAboutRelatives = informationAboutRelativeRepository.findAllByEmployeeId(employeeId);
-                            file.createNewFile();
-                            getDocx(employee, employeeAdditional, file, informationAboutRelatives);
-                            response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
-                            response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-                            FileInputStream fileInputStream = new FileInputStream("informationaboutemployee/" + file.getName());
-                            FileCopyUtils.copy(fileInputStream, response.getOutputStream());
+                            boolean newFile = file.createNewFile();
+                            if (newFile) {
+                                getDocx(employee, employeeAdditional, file, informationAboutRelatives);
+                                response.setHeader("Content-Disposition", "attachment;filename=\"" + file.getName() + "\"");
+                                response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                                FileInputStream fileInputStream = new FileInputStream("informationaboutemployee/" + file.getName());
+                                FileCopyUtils.copy(fileInputStream, response.getOutputStream());
+                                fileInputStream.close();
+                                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                                FileReader fileReader = new FileReader(file);
+                                fileInputStream.close();
+                                fileOutputStream.close();
+                                fileReader.close();
+                                boolean delete = file.delete();
+                                if (delete) {
+                                    return new ApiResponse("O'chdi", true);
+                                }
+                                return new ApiResponse("O'chmadi", false);
+                            }
+                            return new ApiResponse("Fayl ochib bo'lmadi", false);
 
-                            return true;
                         } catch (Exception e) {
-                            return false;
+                            return new ApiResponse("Error", false);
+
                         }
                     } else {
-                        return false;
+                        return new ApiResponse("Bunaday Attachment topilmadi", false);
                     }
                 } else {
-                    return false;
+                    return new ApiResponse("Sizda bunday huquq yo'q", false);
                 }
             } else {
-                return false;
+                return new ApiResponse("Bunday xodim topilmadi", false);
             }
         }
-        return false;
+        return new ApiResponse("Forbidden", false);
     }
 
     //===== Xodim ma'lumotlarini docx qilib chiqarish ======
@@ -267,6 +288,7 @@ public class AttachmentService {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             xdoc.write(fileOutputStream);
             xdoc.close();
+            fileOutputStream.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }

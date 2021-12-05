@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -20,14 +22,17 @@ public class DownloadEmployeeAboutInformationController {
     @Autowired
     AttachmentService attachmentService;
 
-    @CheckPermission(permission = "DOWNLOAD",permission1 = "DOWNLOAD_REGION")
+    //======== Xodim ma'lumotlarini docx qilib yuklab olish ======
+    @CheckPermission(permission = "DOWNLOAD", permission1 = "DOWNLOAD_REGION")
     @GetMapping("/employeeaboutinformation/{id}")
-    public void downloadEmployee(@PathVariable UUID id, HttpServletResponse response){
-        boolean b = attachmentService.downloadEmployee(id, response);
-       if (b){
-           response.setStatus(201);
-       }else {
-           response.setStatus(404);
-       }
+    public void downloadEmployee(@PathVariable UUID id, HttpServletResponse response) throws IOException {
+        ApiResponse apiResponse = attachmentService.downloadEmployee(id, response);
+        if (apiResponse.isSuccess()) {
+            System.out.println(apiResponse.getMessage());
+            response.setStatus(201);
+        } else {
+            System.out.println(apiResponse.getMessage());
+            response.setStatus(404);
+        }
     }
 }

@@ -162,14 +162,12 @@ public class EmployeeService {
     //====== DIRECTOR VA REGION BARCHA XODIMLARNI TAHRIRLASHI ======
     public ApiResponse editEmployee(UUID employeeId, EmployeeDto employeeDto, MultipartFile image) throws IOException {
         Manager managerInSystem = getManagerInSystem();
-        System.out.println(employeeDto.getChettillari());
         if (managerInSystem.getRole().getName().equals("DIRECTOR")) {
             if (image != null && image.getContentType().startsWith("image/")) {
                 Optional<Employee> optionalEmployee = employeeRepository.findById(employeeId);
                 if (optionalEmployee.isPresent()) {
                     Employee employee = optionalEmployee.get();
                     String fullname = employee.getFullname();
-
                     List<Employee> employeeList = employeeRepository.findAll();
                     boolean avai = true;
                     for (Employee e : employeeList) {
@@ -209,7 +207,7 @@ public class EmployeeService {
                                 DeleteImage deleteImage = attachmentService.knowToDelete(employee);
                                 if (deleteImage.getResponse().isSuccess()) {
                                     File file = new File("informationaboutemployee/" + fullname + deleteImage.getAttachment().getId() + ".docx");
-                                    boolean delete = file.delete();
+                                     file.delete();
                                     employeeRepository.save(employee);
                                     ApiResponse apiResponse = attachmentService.uploadEmployeeImageEdit(deleteImage.getAttachment(), employee, image);
                                     if (apiResponse.isSuccess()) {
@@ -266,14 +264,10 @@ public class EmployeeService {
                                     Company company = optionalCompany.get();
                                     List<Employee> employeeList = employeeRepository.findAllByCompanyId(company.getId());
                                     boolean avai = true;
-                                    System.out.println(employeeList.size());
                                     for (Employee e : employeeList) {
                                         if (!e.getId().equals(employeeId)) {
-                                            System.out.println("Ha");
                                             if (e.getFullname().equals(employeeDto.getFullname())) {
-
                                                 avai = false;
-
                                             }
                                         }
                                     }
