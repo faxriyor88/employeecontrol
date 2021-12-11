@@ -389,10 +389,10 @@ public class EmployeeService {
                             i.getBirthdayandbirthofplace(), i.getIshjoyivalavozimi(), i.getTurarjoyi());
                     list1.add(in);
                 }
-
+                Attachment imageUrl = attachmentRepository.getByEmployeeId(id);
                 EmployeeAdditonalDTO employeeAdditonalDTO = new EmployeeAdditonalDTO(list1, e.getNationality(), e.getMalumoti(),
                         e.getMalumotiboyichamutaxasisligi(), e.getIlmiydarajasi(), e.getChettillari(), e.getDavlatmukofotibilantaqdirlanganligiqanaqa(),
-                        e.getSaylovorganiazosi(), e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(), e.getMehnatfaoliyati(), e.getMehnatfaoliyati());
+                        e.getSaylovorganiazosi(), e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(), e.getMehnatfaoliyati(), e.getMehnatfaoliyati(), imageUrl.getImageUrl());
 
                 return employeeAdditonalDTO;
 
@@ -411,9 +411,10 @@ public class EmployeeService {
                             i.getBirthdayandbirthofplace(), i.getIshjoyivalavozimi(), i.getTurarjoyi());
                     list1.add(in);
                 }
+                Attachment imageUrl = attachmentRepository.getByEmployeeId(id);
                 EmployeeAdditonalDTO employeeAdditonalDTO = new EmployeeAdditonalDTO(list1, e.getNationality(), e.getMalumoti(),
                         e.getMalumotiboyichamutaxasisligi(), e.getIlmiydarajasi(), e.getChettillari(), e.getDavlatmukofotibilantaqdirlanganligiqanaqa(),
-                        e.getSaylovorganiazosi(), e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(), e.getMehnatfaoliyati(), e.getMehnatfaoliyati());
+                        e.getSaylovorganiazosi(), e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(), e.getMehnatfaoliyati(), e.getMehnatfaoliyati(), imageUrl.getImageUrl());
                 return employeeAdditonalDTO;
             }
         }

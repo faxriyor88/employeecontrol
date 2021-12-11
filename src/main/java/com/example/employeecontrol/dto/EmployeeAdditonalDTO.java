@@ -22,4 +22,5 @@ public class EmployeeAdditonalDTO {
     private String tamomlaganjoyi;
     private String harbiyunvoni;
     private String mehnatfaoliyati;
+    private String imageUrl;
 }
