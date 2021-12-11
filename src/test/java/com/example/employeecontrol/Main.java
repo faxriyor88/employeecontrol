@@ -1,12 +1,17 @@
 package com.example.employeecontrol;
 
-import java.io.File;
+
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 
 public class Main {
     public static void main(String[] args) {
-        File file=new File("informationaboutemployee/aaa7b834afc-3bd4-4d48-a327-db0048adfa12.docx");
-        File file1=new File(file.getPath());
-        file1.delete();
-        System.out.println(file.getPath());
+        LocalDate localDate=LocalDate.now();
+        LocalDate localDate1=LocalDate.of(2021,11,10);
+        LocalDate localDate2=localDate1;
+        int days = (int) localDate.until(localDate1, ChronoUnit.DAYS);
+        System.out.println(days);
     }
 }
