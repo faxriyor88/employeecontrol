@@ -3,6 +3,7 @@ package com.example.employeecontrol.controller;
 import com.example.employeecontrol.aop.CheckPermission;
 import com.example.employeecontrol.dto.EmployeeAdditonalDTO;
 import com.example.employeecontrol.dto.EmployeeDto;
+import com.example.employeecontrol.jwt.JwtFilter;
 import com.example.employeecontrol.model.Employee;
 import com.example.employeecontrol.repository.EmployeeAdditionalRepository;
 import com.example.employeecontrol.response.ApiResponse;
@@ -15,6 +16,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
@@ -26,12 +31,13 @@ public class EmployeeController {
     EmployeeService employeeService;
     @Autowired
     EmployeeAdditionalRepository additionalRepository;
-
+    @Autowired
+    JwtFilter jwtFilter;
 
     // DIRECTOR VA REGION XODIM QO'SHISHI
     @CheckPermission(permission ="ADD",permission1 = "ADD_REGION")
     @PostMapping("/addemployee")
-    public ResponseEntity<?> addEmployee(@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image) throws IOException {
+    public ResponseEntity<?> addEmployee(@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image)throws IOException {
         ApiResponse apiResponse = employeeService.addEmployee(employeeDto,image);
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.NOT_FOUND).body(apiResponse);
     }

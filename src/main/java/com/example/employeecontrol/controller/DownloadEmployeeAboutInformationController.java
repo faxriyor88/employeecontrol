@@ -1,6 +1,7 @@
 package com.example.employeecontrol.controller;
 
 import com.example.employeecontrol.aop.CheckPermission;
+import com.example.employeecontrol.jwt.JwtFilter;
 import com.example.employeecontrol.model.enums.Permission;
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.service.AttachmentService;
@@ -11,6 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -21,6 +25,8 @@ import java.util.UUID;
 public class DownloadEmployeeAboutInformationController {
     @Autowired
     AttachmentService attachmentService;
+    @Autowired
+    JwtFilter jwtFilter;
 
     //======== Xodim ma'lumotlarini docx qilib yuklab olish ======
     @CheckPermission(permission = "DOWNLOAD", permission1 = "DOWNLOAD_REGION")
