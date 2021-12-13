@@ -11,8 +11,8 @@ import java.time.LocalDate;
 import java.util.UUID;
 @Repository
 public interface DocumentEffectorRepository extends JpaRepository<DocumentEffector, UUID> {
-//    Page<DocumentEffector> findAllByEffectorNameAndExecutionDeadlineBefore(Manager effectorName, LocalDate executionDeadline, Pageable pageable);
-//    Page<DocumentEffector> findAllByEffectorNameAndExecutionDeadlineAfter(Manager effectorName, LocalDate executionDeadline, Pageable pageable);
-//    Page<DocumentEffector> findAllByEffectorNameAndExecutionDeadline(Manager effectorName, LocalDate executionDeadline, Pageable pageable);
+    Page<DocumentEffector> findAllByEffectorNameAndExecutionDeadlineBefore(Manager effectorName, LocalDate executionDeadline, Pageable pageable);
+    Page<DocumentEffector> findAllByEffectorNameAndExecutionDeadlineAfter(Manager effectorName, LocalDate executionDeadline, Pageable pageable);
+    Page<DocumentEffector> findAllByEffectorNameAndExecutionDeadline(Manager effectorName, LocalDate executionDeadline, Pageable pageable);
 
 }

@@ -1,6 +1,9 @@
 package com.example.employeecontrol.model.absentity;
 
 import com.example.employeecontrol.model.Manager;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedBy;
@@ -14,6 +17,7 @@ import javax.persistence.MappedSuperclass;
 import java.sql.Timestamp;
 
 @MappedSuperclass
+@Getter
 public abstract class AbstractEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +28,6 @@ public abstract class AbstractEntity {
     private Timestamp updatedAt;
 //    @CreatedBy
 //    private Integer createdBy;
-    
+
 
 }

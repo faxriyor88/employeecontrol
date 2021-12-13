@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Entity
 @AllArgsConstructor
