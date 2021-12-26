@@ -15,18 +15,18 @@ public class EmployeeAdditional {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nationality;
-    private String malumoti;
-    private String malumotiboyichamutaxasisligi;
-    private String ilmiydarajasi;
-    private String chettillari;
-    private String davlatmukofotibilantaqdirlanganligiqanaqa;
-    private String saylovorganiazosi;
-    private String partiyaviyligi;
-    private String tamomlaganjoyi;
-    private String harbiyunvoni;
-    private String mehnatfaoliyati;
-    private String ilmiyunvon;
+    private String nationality;                                     //1
+    private String malumoti;//2
+    private String malumotiboyichamutaxasisligi;//3
+    private String ilmiydarajasi;//4
+    private String chettillari;//5
+    private String davlatmukofotibilantaqdirlanganligiqanaqa;//6
+    private String saylovorganiazosi;//7
+    private String partiyaviyligi;//8
+    private String tamomlaganjoyi;//9
+    private String harbiyunvoni;//10
+    private String mehnatfaoliyati;//11
+    private String ilmiyunvon;//12
     @OnDelete(action = OnDeleteAction.CASCADE)
     @OneToOne
     private Employee employee;

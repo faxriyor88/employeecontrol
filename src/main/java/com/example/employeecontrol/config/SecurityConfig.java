@@ -42,7 +42,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/login","/manag/countfilenumber","/manag/getmanager","/manag/viewattach","/imagelocation/").permitAll()
+                .antMatchers("/api/login","/manag/countfilenumber","/manag/getmanager","/manag/viewattach","/imagelocation/**").permitAll()
                 .anyRequest().authenticated();
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -52,6 +52,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
         return super.authenticationManager();
+    }
+    @Bean
+    public WebMvcConfigurer corsConfigurer() {
+        return new WebMvcConfigurerAdapter() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry.addMapping("/api/**").allowedOrigins("*").allowedMethods("GET", "POST","PUT", "DELETE");
+
+            }
+        };
     }
 
 }

@@ -5,6 +5,7 @@ import com.example.employeecontrol.dto.EmployeeAdditonalDTO;
 import com.example.employeecontrol.dto.EmployeeDto;
 import com.example.employeecontrol.jwt.JwtFilter;
 import com.example.employeecontrol.model.Employee;
+import com.example.employeecontrol.model.enums.Permission;
 import com.example.employeecontrol.repository.EmployeeAdditionalRepository;
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.service.EmployeeService;
@@ -16,11 +17,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -71,10 +71,10 @@ public class EmployeeController {
     @GetMapping("/getemployeeadditional/{id}")
     public ResponseEntity<?> getEmployeeAdditional(@PathVariable UUID id){
         EmployeeAdditonalDTO employeeAdditional = employeeService.getEmployeeAdditional(id);
+       // List<EmployeeAdditonalDTO> employeeAdditonalDTOS=new ArrayList<>();
+       // employeeAdditonalDTOS.add(employeeAdditional);
         return  ResponseEntity.ok(employeeAdditional);
     }
-
-
 
 
     // Proba uchun
