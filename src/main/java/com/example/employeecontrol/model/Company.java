@@ -1,5 +1,6 @@
 package com.example.employeecontrol.model;
 
+
 import lombok.*;
 
 import javax.persistence.*;
@@ -13,6 +14,7 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String companyname;
+
     @ManyToOne
     private Region region;
 
