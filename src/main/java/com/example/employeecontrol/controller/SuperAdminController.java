@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.util.List;
-
+@CrossOrigin(origins = "https://empproba.herokuapp.com", maxAge = 3600)
 @RestController
 @RequestMapping("/manag")
 public class SuperAdminController {

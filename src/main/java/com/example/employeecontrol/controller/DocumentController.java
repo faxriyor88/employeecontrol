@@ -18,7 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-
+@CrossOrigin(origins = "https://empproba.herokuapp.com", maxAge = 3600)
 @RestController
 @RequestMapping("/api")
 public class DocumentController {

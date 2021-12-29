@@ -15,7 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
-
+@CrossOrigin(origins = "https://empproba.herokuapp.com", maxAge = 3600)
 @RestController
 @RequestMapping("/api/manager")
 public class ManagerController {

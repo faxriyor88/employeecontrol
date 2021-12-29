@@ -7,10 +7,7 @@ import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-
+@CrossOrigin(origins = "https://empproba.herokuapp.com", maxAge = 3600)
 @RestController
 @RequestMapping("/api/download")
 public class DownloadEmployeeAboutInformationController {
