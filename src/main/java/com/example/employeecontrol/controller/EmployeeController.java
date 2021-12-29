@@ -5,10 +5,10 @@ import com.example.employeecontrol.dto.EmployeeAdditonalDTO;
 import com.example.employeecontrol.dto.EmployeeDto;
 import com.example.employeecontrol.jwt.JwtFilter;
 import com.example.employeecontrol.model.Employee;
-import com.example.employeecontrol.model.enums.Permission;
 import com.example.employeecontrol.repository.EmployeeAdditionalRepository;
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.service.EmployeeService;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -17,10 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+
 import java.util.UUID;
 
 
@@ -39,6 +37,7 @@ public class EmployeeController {
     @PostMapping("/addemployee")
     public ResponseEntity<?> addEmployee(@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image)throws IOException {
         ApiResponse apiResponse = employeeService.addEmployee(employeeDto,image);
+        System.out.println(apiResponse.getMessage());
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.NOT_FOUND).body(apiResponse);
     }
 
@@ -90,6 +89,34 @@ public class EmployeeController {
     }
 
 
+
+//    MultipartFile image=null;
+//    EmployeeDto employeeDto = new EmployeeDto();
+//    Iterator<String> fileNames = request.getFileNames();
+//        while (fileNames.hasNext()) {
+//        MultipartFile loginDTO = request.getFile(fileNames.next());
+//        if (loginDTO.getContentType().startsWith("imag")) {
+//            image=loginDTO;
+//        }
+//        if (loginDTO.getContentType().startsWith("appli")){
+//            System.out.println(loginDTO.getContentType()+"sdsd");
+//            Gson gson = new Gson();
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(loginDTO.getInputStream()));
+//            ArrayList<String> list = gson.fromJson(reader, ArrayList.class);
+//
+//            Iterator iterator = list.iterator();
+//            while (iterator.hasNext()) {
+//                String json = gson.toJson(iterator.next());
+//                EmployeeDto employeeDtoreq = gson.fromJson(json, EmployeeDto.class);
+//                employeeDto=employeeDtoreq;
+//                System.out.println(employeeDto.getChettillari());
+//            }
+//        }
+//    }
+//        System.out.println(employeeDto);
+//        if (image!=null){
+//        System.out.println("nullmas");
+//    }
 
 }
 
