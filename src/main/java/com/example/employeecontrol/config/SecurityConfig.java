@@ -43,8 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http.//.configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and()
-                csrf().disable()
+        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and()
+                .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/login","/manag/countfilenumber","/manag/getmanager","/manag/viewattach","/imagelocation/**").permitAll()
                 .anyRequest().authenticated();
