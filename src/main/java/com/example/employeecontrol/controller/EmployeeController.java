@@ -21,7 +21,7 @@ import java.io.IOException;
 
 import java.util.UUID;
 
-
+@CrossOrigin(origins = "https://empproba.herokuapp.com", maxAge = 3600)
 @RestController
 @RequestMapping("/api/employee")
 public class EmployeeController {
@@ -33,6 +33,7 @@ public class EmployeeController {
     JwtFilter jwtFilter;
 
     // DIRECTOR VA REGION XODIM QO'SHISHI
+
     @CheckPermission(permission ="ADD",permission1 = "ADD_REGION")
     @PostMapping("/addemployee")
     public ResponseEntity<?> addEmployee(@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image)throws IOException {

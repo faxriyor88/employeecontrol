@@ -40,7 +40,8 @@ public class JwtFilter extends OncePerRequestFilter implements Filter {
             }
 
         }
-        cors(httpServletRequest,httpServletResponse,filterChain);
+
+       cors(httpServletRequest,httpServletResponse,filterChain);
 
     }
      public void cors(HttpServletRequest request,HttpServletResponse response,FilterChain filterChain) throws ServletException, IOException {
