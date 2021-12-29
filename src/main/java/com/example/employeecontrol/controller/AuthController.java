@@ -11,9 +11,10 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "https://empproba.herokuapp.com", maxAge = 3600)
+
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "https://empproba.herokuapp.com", maxAge = 3600)
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
