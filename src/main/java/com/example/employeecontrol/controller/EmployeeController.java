@@ -8,7 +8,6 @@ import com.example.employeecontrol.model.Employee;
 import com.example.employeecontrol.repository.EmployeeAdditionalRepository;
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.service.EmployeeService;
-import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -38,7 +37,7 @@ public class EmployeeController {
     @PostMapping("/addemployee")
     public ResponseEntity<?> addEmployee(@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image)throws IOException {
         ApiResponse apiResponse = employeeService.addEmployee(employeeDto,image);
-        System.out.println(apiResponse.getMessage());
+
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.NOT_FOUND).body(apiResponse);
     }
 
