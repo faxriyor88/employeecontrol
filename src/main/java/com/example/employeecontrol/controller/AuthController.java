@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "https://empproba.herokuapp.com", maxAge = 3600)
+
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;

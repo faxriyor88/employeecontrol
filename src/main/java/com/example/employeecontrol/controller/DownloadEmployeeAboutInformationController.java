@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
-@CrossOrigin(origins = "https://empproba.herokuapp.com", maxAge = 3600)
+
 @RestController
 @RequestMapping("/api/download")
 public class DownloadEmployeeAboutInformationController {
