@@ -32,17 +32,17 @@ public class EmployeeController {
     JwtFilter jwtFilter;
 
     // DIRECTOR VA REGION XODIM QO'SHISHI
-
-    @CheckPermission(permission ="ADD",permission1 = "ADD_REGION")
+    @CrossOrigin(origins = "*")
+    @CheckPermission(permission = "ADD", permission1 = "ADD_REGION")
     @PostMapping("/addemployee")
-    public ResponseEntity<?> addEmployee(@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image)throws IOException {
-        ApiResponse apiResponse = employeeService.addEmployee(employeeDto,image);
+    public ResponseEntity<?> addEmployee(@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image) throws IOException {
+        ApiResponse apiResponse = employeeService.addEmployee(employeeDto, image);
 
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.NOT_FOUND).body(apiResponse);
     }
 
     // DIRECTOR VA REGION XODIMLARNI KO'RISHI
-    @CheckPermission(permission = "VIEW",permission1 ="VIEW_REGION" )
+    @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
     @GetMapping("/getallemployee/{pagenumber}")
     public ResponseEntity<?> getAllEmployee(@PathVariable Integer pagenumber) {
         Page<Employee> allEmplDire = employeeService.getAllEmployee(pagenumber);
@@ -50,39 +50,41 @@ public class EmployeeController {
     }
 
     // DIRECTOR VA REGION XODIMLARNI TAHRIRLASHI
-    @CheckPermission(permission = "EDIT",permission1 = "EDIT_REGION")
+    @CrossOrigin("*")
+    @CheckPermission(permission = "EDIT", permission1 = "EDIT_REGION")
     @PutMapping("/editemployee/{id}")
-    public ResponseEntity<?> editEmployee(@PathVariable UUID id, @RequestPart EmployeeDto employeeDto,@RequestPart MultipartFile image) throws IOException {
-        ApiResponse apiResponse = employeeService.editEmployee(id, employeeDto,image);
-        return ResponseEntity.status(apiResponse.isSuccess()?201:404).body(apiResponse);
+    public ResponseEntity<?> editEmployee(@PathVariable UUID id, @RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image) throws IOException {
+        ApiResponse apiResponse = employeeService.editEmployee(id, employeeDto, image);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 201 : 404).body(apiResponse);
     }
 
     // DIRECTOR VA REGION XODIMLARNI O'CHIRISHI
-    @CheckPermission(permission = "DELETE",permission1 = "DELETE_REGION")
+    @CrossOrigin("*")
+    @CheckPermission(permission = "DELETE", permission1 = "DELETE_REGION")
     @DeleteMapping("/deleteemployee/{id}")
-    public ResponseEntity<?> deleteEmployee(@PathVariable UUID id){
+    public ResponseEntity<?> deleteEmployee(@PathVariable UUID id) {
         ApiResponse apiResponse = employeeService.deleteEmployee(id);
-        return ResponseEntity.status(apiResponse.isSuccess()?200:404).body(apiResponse);
+        return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 404).body(apiResponse);
     }
 
     // DIRECTOR VA REGION XODIM HAQIDA QO'SHIMCHA MA'LUMOT OLISHI
-    @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
+    @CrossOrigin("*")
+    @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
     @GetMapping("/getemployeeadditional/{id}")
-    public ResponseEntity<?> getEmployeeAdditional(@PathVariable UUID id){
+    public ResponseEntity<?> getEmployeeAdditional(@PathVariable UUID id) {
         EmployeeAdditonalDTO employeeAdditional = employeeService.getEmployeeAdditional(id);
-       // List<EmployeeAdditonalDTO> employeeAdditonalDTOS=new ArrayList<>();
-       // employeeAdditonalDTOS.add(employeeAdditional);
-        return  ResponseEntity.ok(employeeAdditional);
+        // List<EmployeeAdditonalDTO> employeeAdditonalDTOS=new ArrayList<>();
+        // employeeAdditonalDTOS.add(employeeAdditional);
+        return ResponseEntity.ok(employeeAdditional);
     }
 
 
     // Proba uchun
-    @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
+    @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
     @GetMapping("/cors")
-    public String nega(){
-       return "Ishladi";
+    public String nega() {
+        return "Ishladi";
     }
-
 
 
 //    MultipartFile image=null;
