@@ -77,15 +77,10 @@ public class EmployeeController {
 
 
     // Proba uchun
-    @DeleteMapping("/deletenega/{id}")
-    public String nega(@PathVariable Long id){
-        try {
-            additionalRepository.deleteById(id);
-
-            return "O'chirildi";
-        }catch (Exception e){
-            return "O'chirilmadi";
-        }
+    @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
+    @GetMapping("/cors")
+    public String nega(){
+       return "Ishladi";
     }
 
 

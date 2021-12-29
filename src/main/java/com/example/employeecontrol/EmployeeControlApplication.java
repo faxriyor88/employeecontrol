@@ -17,6 +17,7 @@ public class EmployeeControlApplication {
 
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter(){
+
         FilterRegistrationBean<CorsFilter> registrationBean=new FilterRegistrationBean<>();
         UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();
         CorsConfiguration configuration=new CorsConfiguration();
@@ -26,6 +27,5 @@ public class EmployeeControlApplication {
         registrationBean.setFilter(new CorsFilter(source));
         registrationBean.setOrder(0);
         return registrationBean;
-
     }
 }
