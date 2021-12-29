@@ -57,16 +57,16 @@ public class JwtFilter extends OncePerRequestFilter implements Filter {
          response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
     filterChain.doFilter(request,response);
      }
-    @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilter(){
-        FilterRegistrationBean<CorsFilter> registrationBean=new FilterRegistrationBean<>();
-        UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();
-        CorsConfiguration configuration=new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedHeader("*");
-        source.registerCorsConfiguration("/**",configuration);
-        registrationBean.setFilter(new CorsFilter(source));
-        registrationBean.setOrder(0);
-        return registrationBean;
-    }
+//    @Bean
+//    public FilterRegistrationBean<CorsFilter> corsFilter(){
+//        FilterRegistrationBean<CorsFilter> registrationBean=new FilterRegistrationBean<>();
+//        UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration configuration=new CorsConfiguration();
+//        configuration.addAllowedOrigin("*");
+//        configuration.addAllowedHeader("*");
+//        source.registerCorsConfiguration("/**",configuration);
+//        registrationBean.setFilter(new CorsFilter(source));
+//        registrationBean.setOrder(0);
+//        return registrationBean;
+//    }
 }

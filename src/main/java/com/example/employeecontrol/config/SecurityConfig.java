@@ -50,16 +50,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
 
 
-        http.cors(c -> {
-            CorsConfigurationSource cs = r -> {
-                CorsConfiguration cc = new CorsConfiguration();
-                cc.setAllowedOrigins(Collections.singletonList("*"));
-                cc.setAllowedMethods(Arrays.asList("GET", "POST"));
-                return cc;
-            };
-
-            c.configurationSource(cs);
-        });
+//        http.cors(c -> {
+//            CorsConfigurationSource cs = r -> {
+//                CorsConfiguration cc = new CorsConfiguration();
+//                cc.setAllowedOrigins(Collections.singletonList("*"));
+//                cc.setAllowedMethods(Arrays.asList("GET", "POST"));
+//                return cc;
+//            };
+//
+//            c.configurationSource(cs);
+//        });
 
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
