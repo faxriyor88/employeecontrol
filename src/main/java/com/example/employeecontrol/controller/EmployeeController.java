@@ -3,11 +3,13 @@ package com.example.employeecontrol.controller;
 import com.example.employeecontrol.aop.CheckPermission;
 import com.example.employeecontrol.dto.EmployeeAdditonalDTO;
 import com.example.employeecontrol.dto.EmployeeDto;
+import com.example.employeecontrol.dto.LoginDTO;
 import com.example.employeecontrol.jwt.JwtFilter;
 import com.example.employeecontrol.model.Employee;
 import com.example.employeecontrol.repository.EmployeeAdditionalRepository;
 import com.example.employeecontrol.response.ApiResponse;
 import com.example.employeecontrol.service.EmployeeService;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
@@ -16,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import java.util.UUID;
@@ -32,7 +35,6 @@ public class EmployeeController {
     JwtFilter jwtFilter;
 
     // DIRECTOR VA REGION XODIM QO'SHISHI
-    @CrossOrigin(origins = "*")
     @CheckPermission(permission = "ADD", permission1 = "ADD_REGION")
     @PostMapping("/addemployee")
     public ResponseEntity<?> addEmployee(@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image) throws IOException {
@@ -50,7 +52,6 @@ public class EmployeeController {
     }
 
     // DIRECTOR VA REGION XODIMLARNI TAHRIRLASHI
-    @CrossOrigin("*")
     @CheckPermission(permission = "EDIT", permission1 = "EDIT_REGION")
     @PutMapping("/editemployee/{id}")
     public ResponseEntity<?> editEmployee(@PathVariable UUID id, @RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image) throws IOException {
@@ -59,16 +60,15 @@ public class EmployeeController {
     }
 
     // DIRECTOR VA REGION XODIMLARNI O'CHIRISHI
-    @CrossOrigin("*")
     @CheckPermission(permission = "DELETE", permission1 = "DELETE_REGION")
     @DeleteMapping("/deleteemployee/{id}")
     public ResponseEntity<?> deleteEmployee(@PathVariable UUID id) {
         ApiResponse apiResponse = employeeService.deleteEmployee(id);
+        System.out.println("Ishladi");
         return ResponseEntity.status(apiResponse.isSuccess() ? 200 : 404).body(apiResponse);
     }
 
     // DIRECTOR VA REGION XODIM HAQIDA QO'SHIMCHA MA'LUMOT OLISHI
-    @CrossOrigin("*")
     @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
     @GetMapping("/getemployeeadditional/{id}")
     public ResponseEntity<?> getEmployeeAdditional(@PathVariable UUID id) {
@@ -81,9 +81,36 @@ public class EmployeeController {
 
     // Proba uchun
     @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
-    @GetMapping("/cors")
-    public String nega() {
-        return "Ishladi";
+    @GetMapping("/get")
+    public String get(HttpServletResponse response) {
+        response.setHeader("Get","ishlayapti");
+        System.out.println("GET");
+        return "GETISHLADI";
+    }
+    // Proba uchun
+
+    @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
+    @DeleteMapping("/delete")
+    public String delete(HttpServletResponse response) {
+        System.out.println("DELETE");
+        response.setHeader("Delete","ishlayapti");
+        return "DELETEISHLADI";
+    }
+
+    @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
+    @PostMapping("/post")
+    public String post(@RequestBody LoginDTO loginDTO, HttpServletResponse response) {
+        System.out.println(loginDTO.getPassword());
+        response.setHeader(loginDTO.getUsername(), loginDTO.getPassword());
+        return "POSTISHLADI";
+    }
+
+    @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
+    @PutMapping("/update")
+    public String update(HttpServletResponse response) {
+        System.out.println("UPDATE");
+        response.setHeader("Update","ishlayapti");
+        return "PUTISHLADI";
     }
 
 

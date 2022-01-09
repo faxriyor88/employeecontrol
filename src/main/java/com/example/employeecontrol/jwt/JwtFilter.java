@@ -45,28 +45,17 @@ public class JwtFilter extends OncePerRequestFilter implements Filter {
             }
 
         }
-        //filterChain.doFilter(httpServletRequest,httpServletResponse);
-       cors(httpServletRequest,httpServletResponse,filterChain);
+        filterChain.doFilter(httpServletRequest,httpServletResponse);
+     //  cors(httpServletRequest,httpServletResponse,filterChain);
 
     }
-     public void cors(HttpServletRequest request,HttpServletResponse response,FilterChain filterChain) throws ServletException, IOException {
-         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
-         response.setHeader("Access-Control-Allow-Credentials", "true");
-         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-         response.setHeader("Access-Control-Max-Age", "3600");
-         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
-    filterChain.doFilter(request,response);
-     }
-//    @Bean
-//    public FilterRegistrationBean<CorsFilter> corsFilter(){
-//        FilterRegistrationBean<CorsFilter> registrationBean=new FilterRegistrationBean<>();
-//        UrlBasedCorsConfigurationSource source=new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration configuration=new CorsConfiguration();
-//        configuration.addAllowedOrigin("*");
-//        configuration.addAllowedHeader("*");
-//        source.registerCorsConfiguration("/**",configuration);
-//        registrationBean.setFilter(new CorsFilter(source));
-//        registrationBean.setOrder(0);
-//        return registrationBean;
-//    }
+//     public void cors(HttpServletRequest request,HttpServletResponse response,FilterChain filterChain) throws ServletException, IOException {
+//         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
+//         response.setHeader("Access-Control-Allow-Credentials", "true");
+//         response.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
+//         response.setHeader("Access-Control-Max-Age", "86400");
+//         response.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, remember-me");
+//    filterChain.doFilter(request,response);
+    // }
+
 }

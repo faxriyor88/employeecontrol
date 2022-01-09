@@ -36,6 +36,7 @@ public class Manager extends AbstractEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
         List<Permission> permissions=this.role.getPermission();
         List<GrantedAuthority> grantedAuthorities=new ArrayList<>();
         for (Permission permission:permissions){
