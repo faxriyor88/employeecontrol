@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -59,7 +60,7 @@ public class DocumentEffectorService {
     }
 
 
-    //    //=======Documentni ko'rish=========
+    //=======Documentni ko'rish=========
     public Page<DocumentEffectorDtoResponse> viewDocument(Integer pageNumber, String deadLineType) {
         Pageable pageable = PageRequest.of(pageNumber, 10);
         LocalDate localDate = LocalDate.now();
@@ -121,7 +122,7 @@ public class DocumentEffectorService {
         return null;
     }
 
-    //    //===== Document contentini saqlash ======
+    //===== Document contentini saqlash ======
     public void documentSaver(MultipartFile file, DocumentEffector documentEffector) throws IOException {
         String savefile = UUID.randomUUID().toString();
         String[] split = file.getOriginalFilename().split("\\.");
@@ -130,4 +131,13 @@ public class DocumentEffectorService {
         documentContentRepository.save(documentContent);
     }
 
+    // Documentni o'chirish
+    public ApiResponse deleteDocument(UUID documentId){
+        Optional<DocumentEffector> byId = documentEffectorRepository.findById(documentId);
+        if (byId.isPresent()){
+            documentEffectorRepository.deleteById(documentId);
+            return new ApiResponse("O'chirildi",true);
+        }
+        return new ApiResponse("O'chirilmadi",false);
+    }
 }

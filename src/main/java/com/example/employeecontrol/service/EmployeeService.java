@@ -61,10 +61,10 @@ public class EmployeeService {
                                     employeeDto.getDavlatmukofotibilantaqdirlanganligiqanaqa(), employeeDto.getSaylovorganiazosi(),
                                     employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(),
                                     employeeDto.getMehnatfaoliyati(), employee);
-                           UploadImageResponse imageResponse=attachmentService.uploadEmployeeImage(image);
+                            UploadImageResponse imageResponse = attachmentService.uploadEmployeeImage(image);
                             if (imageResponse.getResponse().isSuccess()) {
                                 employeeRepository.save(employee);
-                                Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(),imageResponse.getImageUrl(),employee);
+                                Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
                                 attachmentRepository.save(attachment);
                                 employeeAdditionalRepository.save(employeeAdditional);
                                 for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
@@ -91,6 +91,7 @@ public class EmployeeService {
             }
         }
         if (getManagerInSystem().getRole().getName().equals("REGION")) {
+            System.out.println(getManagerInSystem().getRole().getName());
             if (image != null && image.getContentType().startsWith("image/")) {
                 RegionAppropriateDistrict redis = regionAppropriateDistrict(regionRepository.findById(employeeDto.getRegionId()), districtRepository.findById(employeeDto.getDistrictId()));
                 if (redis.isSuccess()) {
@@ -108,10 +109,10 @@ public class EmployeeService {
                                         employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(),
                                         employeeDto.getMehnatfaoliyati(), employee);
 
-                                UploadImageResponse imageResponse=attachmentService.uploadEmployeeImage(image);
+                                UploadImageResponse imageResponse = attachmentService.uploadEmployeeImage(image);
                                 if (imageResponse.getResponse().isSuccess()) {
                                     employeeRepository.save(employee);
-                                    Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(),  employee);
+                                    Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
                                     attachmentRepository.save(attachment);
                                     employeeAdditionalRepository.save(employeeAdditional);
                                     for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
@@ -158,6 +159,44 @@ public class EmployeeService {
         }
         return null;
     }
+
+    //===== DIRECTOR VA REGION XODIMLARNI QIDIRISHI
+    //1.Ism bo'yicha qidirish
+    public List<Employee> findByName(String fullname) {
+        Manager manager = getManagerInSystem();
+        if (manager.getRole().getName().equals("DIRECTOR")) {
+            return employeeRepository.findAllByFullnameContaining(fullname);
+        }
+        if (manager.getRole().getName().equals("REGION")) {
+           return employeeRepository.findAllByFullnameContainingAndCompanyId(fullname, manager.getCompany().getId());
+        }
+        return new ArrayList<>();
+    }
+
+    //2.Company bo'yicha qidirish
+    public List<Employee> findByCompany(String companyName) {
+        Manager manager = getManagerInSystem();
+        if (manager.getRole().getName().equals("DIRECTOR")) {
+            return employeeRepository.findByCompany_CompanynameContaining(companyName);
+        }
+        if (manager.getRole().getName().equals("REGION")) {
+            return employeeRepository.findCompanyNameAndCompanyId(manager.getCompany().getId(),companyName);
+        }
+        return new ArrayList<>();
+    }
+
+    //3.Lavozim bo'yicha qidirish
+    public List<Employee> findByPosition(String lavozimi) {
+        Manager manager = getManagerInSystem();
+        if (manager.getRole().getName().equals("DIRECTOR")) {
+            return employeeRepository.findAllByLavozimivaQachondanContaining(lavozimi);
+        }
+        if (manager.getRole().getName().equals("REGION")) {
+            return employeeRepository.findAllByLavozimivaQachondanContainingAndCompanyId(lavozimi, manager.getCompany().getId());
+        }
+        return new ArrayList<>();
+    }
+
 
     //====== DIRECTOR VA REGION BARCHA XODIMLARNI TAHRIRLASHI ======
     public ApiResponse editEmployee(UUID employeeId, EmployeeDto employeeDto, MultipartFile image) throws IOException {
@@ -207,7 +246,7 @@ public class EmployeeService {
                                 DeleteImage deleteImage = attachmentService.knowToDelete(employee);
                                 if (deleteImage.getResponse().isSuccess()) {
                                     File file = new File("informationaboutemployee/" + fullname + deleteImage.getAttachment().getId() + ".docx");
-                                     file.delete();
+                                    file.delete();
                                     employeeRepository.save(employee);
                                     ApiResponse apiResponse = attachmentService.uploadEmployeeImageEdit(deleteImage.getAttachment(), employee, image);
                                     if (apiResponse.isSuccess()) {
@@ -353,7 +392,7 @@ public class EmployeeService {
         if (managerInSystem.getRole().getName().equals("DIRECTOR")) {
             if (employeeRepository.existsById(id)) {
                 Attachment attachment = attachmentRepository.getByEmployeeId(id);
-                File file = new File("imagelocation/"+attachment.getSaveimagename());
+                File file = new File("imagelocation/" + attachment.getSaveimagename());
                 file.delete();
                 employeeRepository.deleteById(id);
                 return new ApiResponse("O'chirildi", true);
@@ -364,7 +403,7 @@ public class EmployeeService {
         if (managerInSystem.getRole().getName().equals("REGION")) {
             if (employeeRepository.existsByCompanyIdAndId(managerInSystem.getCompany().getId(), id)) {
                 Attachment attachment = attachmentRepository.getByEmployeeId(id);
-                File file = new File("imagelocation/"+attachment.getSaveimagename());
+                File file = new File("imagelocation/" + attachment.getSaveimagename());
                 file.delete();
                 employeeRepository.deleteById(id);
                 return new ApiResponse("O'chirildi", true);

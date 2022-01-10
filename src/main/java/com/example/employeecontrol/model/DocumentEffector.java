@@ -33,6 +33,7 @@ public class DocumentEffector {
     private Manager effectorName;
     private String effectorSection;
     private LocalDate executionDeadline;//date
+   // private boolean control;
 
 
     public DocumentEffector(String taskSection, String documentType, String documentNumber, LocalDate documentDate, LocalDate registrDay, String registrNumber, String documentNameOrContent, String organizationName, String directorResolution, Manager effectorName, String effectorSection, LocalDate executionDeadline) {

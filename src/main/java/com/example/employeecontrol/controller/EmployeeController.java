@@ -51,6 +51,28 @@ public class EmployeeController {
         return ResponseEntity.ok(allEmplDire);
     }
 
+
+    //DIRECTOR VA REGION XODIMLARNI QIDIRISHI
+    // 1.Ism bo'yicha qidirish
+    @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
+    @GetMapping("/findbyfullname")
+    public ResponseEntity<?> findByFullName(@RequestParam String fullname){
+      return ResponseEntity.ok(employeeService.findByName(fullname));
+    }
+    //2.Company bo'yicha qidirish
+    @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
+    @GetMapping("/findbycompany")
+    public ResponseEntity<?> findByCompany(@RequestParam String companyName){
+        return ResponseEntity.ok(employeeService.findByCompany(companyName));
+    }
+    //3.Lavozim bo'yicha qidirish
+    @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
+    @GetMapping("/findbyposition")
+    public ResponseEntity<?> findByPosition(@RequestParam String positionName){
+        return ResponseEntity.ok(employeeService.findByPosition(positionName));
+    }
+
+
     // DIRECTOR VA REGION XODIMLARNI TAHRIRLASHI
     @CheckPermission(permission = "EDIT", permission1 = "EDIT_REGION")
     @PutMapping("/editemployee/{id}")
