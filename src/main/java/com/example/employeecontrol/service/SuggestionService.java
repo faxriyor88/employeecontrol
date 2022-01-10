@@ -34,7 +34,7 @@ public class SuggestionService {
 
     // Suggestion uchun district olish, xodim tug'ilgan joyi uchun
     public List<District> getSuggesDistrict(Integer regionId) {
-        return districtRepository.findAllById(regionId);
+        return districtRepository.findAllByRegionId(regionId);
     }
 
     //Director va Region role uchun, Suggestion uchun region olish,xodim ish joyini tanlash uchun
