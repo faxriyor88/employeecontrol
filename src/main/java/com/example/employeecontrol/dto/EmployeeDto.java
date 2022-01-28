@@ -1,6 +1,7 @@
 package com.example.employeecontrol.dto;
 
 
+import com.example.employeecontrol.model.MehnatFaoliyati;
 import lombok.*;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class EmployeeDto {
     private String partiyaviyligi;
     private String tamomlaganjoyi;
     private String harbiyunvoni;
-    private String mehnatfaoliyati;
+    private List<MehnatFaoliyatiDto> mehnatfaoliyati;
 
 
 }

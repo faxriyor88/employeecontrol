@@ -11,7 +11,6 @@ import java.util.UUID;
 
 @Repository
 public interface InformationAboutRelativeRepository extends JpaRepository<InformationAboutRelative, UUID> {
-    void deleteAllByEmployeeId(UUID employee_id);
     List<InformationAboutRelative> findAllByEmployeeId(UUID employee_id);
 
 }

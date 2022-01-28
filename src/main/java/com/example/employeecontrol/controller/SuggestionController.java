@@ -18,6 +18,7 @@ public class SuggestionController {
     public ResponseEntity<?> getSugReg(){
         return ResponseEntity.ok(suggestionService.getSuggesRegion());
     }
+
     // Suggestion uchun district olish, xodim tug'ilgan joyi uchun
     @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
     @GetMapping("/district/{regionid}")

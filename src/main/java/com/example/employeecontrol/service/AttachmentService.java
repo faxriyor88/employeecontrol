@@ -38,6 +38,8 @@ public class AttachmentService {
     InformationAboutRelativeRepository informationAboutRelativeRepository;
     @Autowired
     EmployeeService employeeService;
+    @Autowired
+    MehnatFaoliyatiRepository mehnatFaoliyatiRepository;
 
 
     //====== Xodim rasmini bazaga yuklash ======
@@ -187,8 +189,12 @@ public class AttachmentService {
             String harbiyunvon = employeeAdditional.getHarbiyunvoni();
             String davlatmukofoti = employeeAdditional.getDavlatmukofotibilantaqdirlanganligiqanaqa();
             String saylovorganiazosi = employeeAdditional.getSaylovorganiazosi();
-            String mehnatfaoliyati = employeeAdditional.getMehnatfaoliyati();
-            String[] empadd = {fullname, lavozimivaQachondan, tugilganyili, tugilganjoyi, millati, partiyaviyligi, malumoti, tamomlagan, malumotiboyichamutax, ilmiydaraja, ilmiyunvon, chettillari, harbiyunvon, davlatmukofoti, saylovorganiazosi, mehnatfaoliyati, fullname};
+            String mehnatfaoliyati="";
+            for (MehnatFaoliyati m:mehnatFaoliyatiRepository.findAllByEmployeeId(employee.getId()) ) {
+                mehnatfaoliyati=mehnatfaoliyati+m.getText()+"\r\n\n";
+            }
+
+            String[] empadd = {fullname, lavozimivaQachondan, tugilganyili, tugilganjoyi, millati, partiyaviyligi, malumoti, tamomlagan, malumotiboyichamutax, ilmiydaraja, ilmiyunvon, chettillari, harbiyunvon, davlatmukofoti, saylovorganiazosi, mehnatfaoliyati.toString(), fullname};
             String[] find = {"fullname", "lavozimi", "tugyili", "tug", "nation", "ayitrap", "lam", "momat", "lammut", "lirad", "liun", "tehclit", "rahun", "vadkum", "depxalq", "tanhem", "yak"};
 
             String pathOriginal = "src/main/java/com/example/employeecontrol/service/docxs/"; // path template

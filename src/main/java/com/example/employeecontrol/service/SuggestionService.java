@@ -44,14 +44,14 @@ public class SuggestionService {
         if (manager.getRole().getName().equals("DIRECTOR")) {
             List<Company> all = companyRepository.findAll();
             for (Company c : all) {
-                companyDTOS.add(new CompanyDTO(c.getCompanyname(), c.getRegion().getId()));
+                companyDTOS.add(new CompanyDTO(c.getId(),c.getCompanyname(), c.getRegion().getId()));
             }
             return companyDTOS;
         }
         if (manager.getRole().getName().equals("REGION")) {
             Optional<Company> company = companyRepository.findById(manager.getCompany().getId());
             if (company.isPresent()) {
-                CompanyDTO companydto = new CompanyDTO(company.get().getCompanyname(), company.get().getRegion().getId());
+                CompanyDTO companydto = new CompanyDTO(company.get().getId(),company.get().getCompanyname(), company.get().getRegion().getId());
                 companyDTOS.add(companydto);
                 return companyDTOS;
             }

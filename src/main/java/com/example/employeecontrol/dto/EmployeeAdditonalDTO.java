@@ -21,6 +21,6 @@ public class EmployeeAdditonalDTO {
     private String partiyaviyligi;
     private String tamomlaganjoyi;
     private String harbiyunvoni;
-    private String mehnatfaoliyati;
+    private List<MehnatFaoliyatiDto> mehnatFaoliyati;
     private String imageUrl;
 }

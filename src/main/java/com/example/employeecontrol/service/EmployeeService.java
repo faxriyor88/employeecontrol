@@ -3,6 +3,7 @@ package com.example.employeecontrol.service;
 import com.example.employeecontrol.dto.EmployeeAdditonalDTO;
 import com.example.employeecontrol.dto.EmployeeDto;
 import com.example.employeecontrol.dto.InformationAboutRelativeDTO;
+import com.example.employeecontrol.dto.MehnatFaoliyatiDto;
 import com.example.employeecontrol.model.*;
 import com.example.employeecontrol.repository.*;
 import com.example.employeecontrol.response.ApiResponse;
@@ -42,6 +43,8 @@ public class EmployeeService {
     AttachmentService attachmentService;
     @Autowired
     AttachmentRepository attachmentRepository;
+    @Autowired
+    MehnatFaoliyatiRepository mehnatFaoliyatiRepository;
 
     //====== DIRECTOR VA REGION XODIM QO'SHISHI ======
     public ApiResponse addEmployee(EmployeeDto employeeDto, MultipartFile image) throws IOException {
@@ -60,12 +63,18 @@ public class EmployeeService {
                                     employeeDto.getIlmiydarajasi(), employeeDto.getIlmiyunvoni(), employeeDto.getChettillari(),
                                     employeeDto.getDavlatmukofotibilantaqdirlanganligiqanaqa(), employeeDto.getSaylovorganiazosi(),
                                     employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(),
-                                    employeeDto.getMehnatfaoliyati(), employee);
+                                    employee);
                             UploadImageResponse imageResponse = attachmentService.uploadEmployeeImage(image);
                             if (imageResponse.getResponse().isSuccess()) {
                                 employeeRepository.save(employee);
                                 Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
                                 attachmentRepository.save(attachment);
+                                List<MehnatFaoliyati> arrayList=new ArrayList<>();
+                                for (MehnatFaoliyatiDto m:employeeDto.getMehnatfaoliyati()) {
+                                    MehnatFaoliyati mehnatFaoliyati=new MehnatFaoliyati(m.getText(),employee);
+                                    arrayList.add(mehnatFaoliyati);
+                                }
+                                mehnatFaoliyatiRepository.saveAll(arrayList);
                                 employeeAdditionalRepository.save(employeeAdditional);
                                 for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
                                     InformationAboutRelative informationAboutRelative = new InformationAboutRelative(
@@ -106,14 +115,19 @@ public class EmployeeService {
                                         employeeDto.getMalumoti(), employeeDto.getMalumotiboyichamutaxasisligi(),
                                         employeeDto.getIlmiydarajasi(), employeeDto.getIlmiyunvoni(), employeeDto.getChettillari(),
                                         employeeDto.getDavlatmukofotibilantaqdirlanganligiqanaqa(), employeeDto.getSaylovorganiazosi(),
-                                        employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(),
-                                        employeeDto.getMehnatfaoliyati(), employee);
+                                        employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(), employee);
 
                                 UploadImageResponse imageResponse = attachmentService.uploadEmployeeImage(image);
                                 if (imageResponse.getResponse().isSuccess()) {
                                     employeeRepository.save(employee);
                                     Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
                                     attachmentRepository.save(attachment);
+                                    List<MehnatFaoliyati> arrayList=new ArrayList<>();
+                                    for (MehnatFaoliyatiDto m:employeeDto.getMehnatfaoliyati()) {
+                                        MehnatFaoliyati mehnatFaoliyati=new MehnatFaoliyati(m.getText(),employee);
+                                        arrayList.add(mehnatFaoliyati);
+                                    }
+                                    mehnatFaoliyatiRepository.saveAll(arrayList);
                                     employeeAdditionalRepository.save(employeeAdditional);
                                     for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
                                         InformationAboutRelative informationAboutRelative = new InformationAboutRelative(
@@ -198,7 +212,7 @@ public class EmployeeService {
     }
 
 
-    //====== DIRECTOR VA REGION BARCHA XODIMLARNI TAHRIRLASHI ======
+    //====== DIRECTOR VA REGION XODIMLARNI TAHRIRLASHI ======
     public ApiResponse editEmployee(UUID employeeId, EmployeeDto employeeDto, MultipartFile image) throws IOException {
         Manager managerInSystem = getManagerInSystem();
         if (managerInSystem.getRole().getName().equals("DIRECTOR")) {
@@ -241,7 +255,7 @@ public class EmployeeService {
                                 employeeAdditional.setNationality(employeeDto.getNationality());
                                 employeeAdditional.setPartiyaviyligi(employeeDto.getPartiyaviyligi());
                                 employeeAdditional.setSaylovorganiazosi(employeeDto.getSaylovorganiazosi());
-                                employeeAdditional.setMehnatfaoliyati(employeeDto.getMehnatfaoliyati());
+                  //              employeeAdditional.setMehnatfaoliyati(employeeDto.getMehnatfaoliyati());
                                 employeeAdditional.setTamomlaganjoyi(employeeDto.getTamomlaganjoyi());
                                 DeleteImage deleteImage = attachmentService.knowToDelete(employee);
                                 if (deleteImage.getResponse().isSuccess()) {
@@ -250,6 +264,13 @@ public class EmployeeService {
                                     employeeRepository.save(employee);
                                     ApiResponse apiResponse = attachmentService.uploadEmployeeImageEdit(deleteImage.getAttachment(), employee, image);
                                     if (apiResponse.isSuccess()) {
+                                        List<MehnatFaoliyati> arrayList=new ArrayList<>();
+                                        for (MehnatFaoliyatiDto m:employeeDto.getMehnatfaoliyati()) {
+                                            MehnatFaoliyati mehnatFaoliyati=new MehnatFaoliyati(m.getText(),employee);
+                                            arrayList.add(mehnatFaoliyati);
+                                        }
+                                        mehnatFaoliyatiRepository.deleteAll(mehnatFaoliyatiRepository.findAllByEmployeeId(employeeId));
+                                        mehnatFaoliyatiRepository.saveAll(arrayList);
                                         employeeAdditionalRepository.save(employeeAdditional);
                                         List<InformationAboutRelative> list = new ArrayList<>();
                                         for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
@@ -327,7 +348,7 @@ public class EmployeeService {
                                         employeeAdditional.setNationality(employeeDto.getNationality());
                                         employeeAdditional.setPartiyaviyligi(employeeDto.getPartiyaviyligi());
                                         employeeAdditional.setSaylovorganiazosi(employeeDto.getSaylovorganiazosi());
-                                        employeeAdditional.setMehnatfaoliyati(employeeDto.getMehnatfaoliyati());
+                                     //   employeeAdditional.setMehnatfaoliyati(employeeDto.getMehnatfaoliyati());
                                         employeeAdditional.setTamomlaganjoyi(employeeDto.getTamomlaganjoyi());
                                         DeleteImage deleteImage = attachmentService.knowToDelete(employee);
                                         if (deleteImage.getResponse().isSuccess()) {
@@ -336,6 +357,13 @@ public class EmployeeService {
                                             employeeRepository.save(employee);
                                             ApiResponse apiResponse = attachmentService.uploadEmployeeImageEdit(deleteImage.getAttachment(), employee, image);
                                             if (apiResponse.isSuccess()) {
+                                                List<MehnatFaoliyati> arrayList=new ArrayList<>();
+                                                for (MehnatFaoliyatiDto m:employeeDto.getMehnatfaoliyati()) {
+                                                    MehnatFaoliyati mehnatFaoliyati=new MehnatFaoliyati(m.getText(),employee);
+                                                    arrayList.add(mehnatFaoliyati);
+                                                }
+                                                mehnatFaoliyatiRepository.deleteAll(mehnatFaoliyatiRepository.findAllByEmployeeId(employeeId));
+                                                mehnatFaoliyatiRepository.saveAll(arrayList);
                                                 employeeAdditionalRepository.save(employeeAdditional);
                                                 List<InformationAboutRelative> list = new ArrayList<>();
                                                 for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
@@ -428,10 +456,16 @@ public class EmployeeService {
                             i.getBirthdayandbirthofplace(), i.getIshjoyivalavozimi(), i.getTurarjoyi());
                     list1.add(in);
                 }
+                List<MehnatFaoliyatiDto> mehnatFaoliyatiDtos=new ArrayList<>();
+                for (MehnatFaoliyati m:mehnatFaoliyatiRepository.findAllByEmployeeId(id)) {
+                    MehnatFaoliyatiDto mehnatFaoliyatiDto=new MehnatFaoliyatiDto(m.getText());
+                    mehnatFaoliyatiDtos.add(mehnatFaoliyatiDto);
+                }
                 Attachment imageUrl = attachmentRepository.getByEmployeeId(id);
-                EmployeeAdditonalDTO employeeAdditonalDTO = new EmployeeAdditonalDTO(list1, e.getNationality(), e.getMalumoti(),
-                        e.getMalumotiboyichamutaxasisligi(), e.getIlmiydarajasi(), e.getChettillari(), e.getDavlatmukofotibilantaqdirlanganligiqanaqa(),
-                        e.getSaylovorganiazosi(), e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(), e.getMehnatfaoliyati(), e.getMehnatfaoliyati(), imageUrl.getImageUrl());
+                EmployeeAdditonalDTO employeeAdditonalDTO = new EmployeeAdditonalDTO(list1,e.getNationality(),e.getMalumoti(),
+                        e.getMalumotiboyichamutaxasisligi(),e.getIlmiydarajasi(),e.getIlmiyunvon(),
+                        e.getChettillari(),e.getDavlatmukofotibilantaqdirlanganligiqanaqa(),e.getSaylovorganiazosi(),
+                        e.getPartiyaviyligi(),e.getTamomlaganjoyi(),e.getHarbiyunvoni(),mehnatFaoliyatiDtos,imageUrl.getImageUrl());
 
                 return employeeAdditonalDTO;
 
@@ -450,10 +484,15 @@ public class EmployeeService {
                             i.getBirthdayandbirthofplace(), i.getIshjoyivalavozimi(), i.getTurarjoyi());
                     list1.add(in);
                 }
+                List<MehnatFaoliyatiDto> mehnatFaoliyatiDtos=new ArrayList<>();
+                for (MehnatFaoliyati m:mehnatFaoliyatiRepository.findAllByEmployeeId(id)) {
+                    MehnatFaoliyatiDto mehnatFaoliyatiDto=new MehnatFaoliyatiDto(m.getText());
+                    mehnatFaoliyatiDtos.add(mehnatFaoliyatiDto);
+                }
                 Attachment imageUrl = attachmentRepository.getByEmployeeId(id);
                 EmployeeAdditonalDTO employeeAdditonalDTO = new EmployeeAdditonalDTO(list1, e.getNationality(), e.getMalumoti(),
-                        e.getMalumotiboyichamutaxasisligi(), e.getIlmiydarajasi(), e.getChettillari(), e.getDavlatmukofotibilantaqdirlanganligiqanaqa(),
-                        e.getSaylovorganiazosi(), e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(), e.getMehnatfaoliyati(), e.getMehnatfaoliyati(), imageUrl.getImageUrl());
+                        e.getMalumotiboyichamutaxasisligi(), e.getIlmiydarajasi(),e.getIlmiyunvon(), e.getChettillari(), e.getDavlatmukofotibilantaqdirlanganligiqanaqa(),
+                        e.getSaylovorganiazosi(), e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(),mehnatFaoliyatiDtos, imageUrl.getImageUrl());
                 return employeeAdditonalDTO;
             }
         }
