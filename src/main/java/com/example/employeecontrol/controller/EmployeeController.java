@@ -43,10 +43,11 @@ public class EmployeeController {
     // DIRECTOR VA REGION XODIM QO'SHISHI
     @CheckPermission(permission = "ADD", permission1 = "ADD_REGION")
     @PostMapping("/addemployee")
-    public ResponseEntity<?> addEmployee(MultipartHttpServletRequest request/*@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image*/) throws IOException, ServletException {
+    public ResponseEntity<?> addEmployee(HttpServletRequest request/*@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image*/) throws IOException, ServletException {
         Gson gson=new Gson();
         Part employeeDto1=request.getPart("employeeDto");
-        MultipartFile image = request.getFile("image");
+        Part image=request.getPart("image");
+//        MultipartFile image = request.getFile("image");
         EmployeeDto employeeDto = gson.fromJson(new InputStreamReader(employeeDto1.getInputStream()), EmployeeDto.class);
         ApiResponse apiResponse= employeeService.addEmployee(employeeDto, image);
         return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.NOT_FOUND).body(apiResponse);

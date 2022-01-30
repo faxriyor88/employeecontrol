@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,14 +45,38 @@ public class AttachmentService {
 
 
     //====== Xodim rasmini bazaga yuklash ======
-    public UploadImageResponse uploadEmployeeImage(MultipartFile image) throws IOException {
+    public UploadImageResponse uploadEmployeeImage(Part filePart/*MultipartFile image*/) throws IOException {
         try {
-            String savefileimage = UUID.randomUUID().toString();
-            String[] split = image.getOriginalFilename().split("\\.");
-            savefileimage = savefileimage + "." + split[split.length - 1];
-            Path path = Paths.get("imagelocation/" + savefileimage);
+            String image = convertStreamToString(filePart.getInputStream());
+            String[] strings = image.split(",");
+            String extension;
+            switch (strings[0]) {//check image's extension
+                case "data:image/jpeg;base64":
+                    extension = "jpeg";
+                    break;
+                case "data:image/png;base64":
+                    extension = "png";
+                    break;
+                default://should write cases for more images types
+                    extension = "jpg";
+                    break;
+            }
+            byte[] data = DatatypeConverter.parseBase64Binary(strings[1]);
+            String savefileimage = UUID.randomUUID().toString()+"."+extension;
             String imageUrl = "https://empproba.herokuapp.com/imagelocation/" + savefileimage;
-            Files.copy(image.getInputStream(), path);
+            File file = new File("imagelocation/" + savefileimage);
+            try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(file))) {
+                outputStream.write(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+//            String savefileimage = UUID.randomUUID().toString();
+//            String[] split = image.getOriginalFilename().split("\\.");
+//            savefileimage = savefileimage + "." + split[split.length - 1];
+//            Path path = Paths.get("imagelocation/" + savefileimage);
+//            String imageUrl = "https://empproba.herokuapp.com/imagelocation/" + savefileimage;
+//            Files.copy(image.getInputStream(), path);
             return new UploadImageResponse(new ApiResponse("Success", true), imageUrl, savefileimage);
         } catch (Exception e) {
             return new UploadImageResponse(new ApiResponse("Xodim rasmini bazaga yuklab bo'lmadi", false), null, null);
@@ -330,5 +356,10 @@ public class AttachmentService {
             }
         }
         return new DeleteImage(new ApiResponse("Bunday rasm topilmadi", false), null);
+    }
+
+    public String convertStreamToString(java.io.InputStream is) {
+        java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
 }

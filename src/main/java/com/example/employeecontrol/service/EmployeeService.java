@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,84 +49,34 @@ public class EmployeeService {
     MehnatFaoliyatiRepository mehnatFaoliyatiRepository;
 
     //====== DIRECTOR VA REGION XODIM QO'SHISHI ======
-    public ApiResponse addEmployee(EmployeeDto employeeDto, MultipartFile image) throws IOException {
+    public ApiResponse addEmployee(EmployeeDto employeeDto, Part image/* MultipartFile image*/) throws IOException {
         if (getManagerInSystem().getRole().getName().equals("DIRECTOR")) {
-            if (image != null && image.getContentType().startsWith("image/")) {
-                RegionAppropriateDistrict redis = regionAppropriateDistrict(regionRepository.findById(employeeDto.getRegionId()), districtRepository.findById(employeeDto.getDistrictId()));
-                if (redis.isSuccess()) {
-                    Optional<Company> optionalCompany = companyRepository.findById(employeeDto.getCompanyId());
-                    if (optionalCompany.isPresent()) {
-                        District district = redis.getDistrict();
-                        Company company = optionalCompany.get();
-                        if (!employeeRepository.existsByFullname(employeeDto.getFullname())) {
-                            Employee employee = new Employee(employeeDto.getFullname(), district, company, employeeDto.getBirthday(), employeeDto.getLavozimivaQachondan());
-                            EmployeeAdditional employeeAdditional = new EmployeeAdditional(employeeDto.getNationality(),
-                                    employeeDto.getMalumoti(), employeeDto.getMalumotiboyichamutaxasisligi(),
-                                    employeeDto.getIlmiydarajasi(), employeeDto.getIlmiyunvoni(), employeeDto.getChettillari(),
-                                    employeeDto.getDavlatmukofotibilantaqdirlanganligiqanaqa(), employeeDto.getSaylovorganiazosi(),
-                                    employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(),
-                                    employee);
-                            UploadImageResponse imageResponse = attachmentService.uploadEmployeeImage(image);
-                            if (imageResponse.getResponse().isSuccess()) {
-                                employeeRepository.save(employee);
-                                Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
-                                attachmentRepository.save(attachment);
-                                List<MehnatFaoliyati> arrayList=new ArrayList<>();
-                                for (MehnatFaoliyatiDto m:employeeDto.getMehnatfaoliyati()) {
-                                    MehnatFaoliyati mehnatFaoliyati=new MehnatFaoliyati(m.getText(),employee);
-                                    arrayList.add(mehnatFaoliyati);
-                                }
-                                mehnatFaoliyatiRepository.saveAll(arrayList);
-                                employeeAdditionalRepository.save(employeeAdditional);
-                                for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
-                                    InformationAboutRelative informationAboutRelative = new InformationAboutRelative(
-                                            i.getName(), i.getRelativefullname(), i.getBirthdayandbirthofplace(), i.getIshjoyivalavozimi(),
-                                            i.getTurarjoyi(), employee);
-                                    aboutRelativeRepository.save(informationAboutRelative);
-                                }
-                                return new ApiResponse("Saqlandi", true);
-                            } else {
-                                return imageResponse.getResponse();
-                            }
-                        } else {
-                            return new ApiResponse("Bunday fullname bor", false);
-                        }
-                    } else {
-                        return new ApiResponse("Bunday Companiya topilmadi", false);
-                    }
-                } else {
-                    return new ApiResponse(redis.getMessage(), false);
-                }
-            } else {
-                return new ApiResponse("Image tanlanmagan", false);
-            }
-        }
-        if (getManagerInSystem().getRole().getName().equals("REGION")) {
-            System.out.println(getManagerInSystem().getRole().getName());
-            if (image != null && image.getContentType().startsWith("image/")) {
-                RegionAppropriateDistrict redis = regionAppropriateDistrict(regionRepository.findById(employeeDto.getRegionId()), districtRepository.findById(employeeDto.getDistrictId()));
-                if (redis.isSuccess()) {
-                    Optional<Company> optionalCompany = companyRepository.findById(employeeDto.getCompanyId());
-                    if (optionalCompany.isPresent()) {
-                        Company company = optionalCompany.get();
-                        if (getManagerInSystem().getCompany().getId() == company.getId()) {
-                            if (!employeeRepository.existsByFullnameAndCompanyId(employeeDto.getFullname(), employeeDto.getCompanyId())) {
-                                District district = redis.getDistrict();
+            if (image != null) {
+                String inspect = attachmentService.convertStreamToString(image.getInputStream());
+                if (inspect.contains("image/")) {
+                    RegionAppropriateDistrict redis = regionAppropriateDistrict(regionRepository.findById(employeeDto.getRegionId()), districtRepository.findById(employeeDto.getDistrictId()));
+                    if (redis.isSuccess()) {
+                        Optional<Company> optionalCompany = companyRepository.findById(employeeDto.getCompanyId());
+                        if (optionalCompany.isPresent()) {
+                            District district = redis.getDistrict();
+                            Company company = optionalCompany.get();
+                            if (!employeeRepository.existsByFullname(employeeDto.getFullname())) {
                                 Employee employee = new Employee(employeeDto.getFullname(), district, company, employeeDto.getBirthday(), employeeDto.getLavozimivaQachondan());
                                 EmployeeAdditional employeeAdditional = new EmployeeAdditional(employeeDto.getNationality(),
                                         employeeDto.getMalumoti(), employeeDto.getMalumotiboyichamutaxasisligi(),
                                         employeeDto.getIlmiydarajasi(), employeeDto.getIlmiyunvoni(), employeeDto.getChettillari(),
                                         employeeDto.getDavlatmukofotibilantaqdirlanganligiqanaqa(), employeeDto.getSaylovorganiazosi(),
-                                        employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(), employee);
-
+                                        employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(),
+                                        employee);
                                 UploadImageResponse imageResponse = attachmentService.uploadEmployeeImage(image);
                                 if (imageResponse.getResponse().isSuccess()) {
                                     employeeRepository.save(employee);
-                                    Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
+                                  //  Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
+                                    Attachment attachment = new Attachment(employeeDto.getFullname(), inspect.substring(5,inspect.indexOf(";")), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
                                     attachmentRepository.save(attachment);
-                                    List<MehnatFaoliyati> arrayList=new ArrayList<>();
-                                    for (MehnatFaoliyatiDto m:employeeDto.getMehnatfaoliyati()) {
-                                        MehnatFaoliyati mehnatFaoliyati=new MehnatFaoliyati(m.getText(),employee);
+                                    List<MehnatFaoliyati> arrayList = new ArrayList<>();
+                                    for (MehnatFaoliyatiDto m : employeeDto.getMehnatfaoliyati()) {
+                                        MehnatFaoliyati mehnatFaoliyati = new MehnatFaoliyati(m.getText(), employee);
                                         arrayList.add(mehnatFaoliyati);
                                     }
                                     mehnatFaoliyatiRepository.saveAll(arrayList);
@@ -136,7 +87,6 @@ public class EmployeeService {
                                                 i.getTurarjoyi(), employee);
                                         aboutRelativeRepository.save(informationAboutRelative);
                                     }
-
                                     return new ApiResponse("Saqlandi", true);
                                 } else {
                                     return imageResponse.getResponse();
@@ -145,15 +95,78 @@ public class EmployeeService {
                                 return new ApiResponse("Bunday fullname bor", false);
                             }
                         } else {
-                            return new ApiResponse("Siz xodimni bu companyga qo'shaolmaysiz", false);
+                            return new ApiResponse("Bunday Companiya topilmadi", false);
                         }
                     } else {
-                        return new ApiResponse("Bunday Companiya topilmadi", false);
+                        return new ApiResponse(redis.getMessage(), false);
                     }
                 } else {
-                    return new ApiResponse(redis.getMessage(), false);
+                    return new ApiResponse("Image tanlanmagan", false);
                 }
             } else {
+                return new ApiResponse("Image tanlanmagan", false);
+            }
+        }
+        if (getManagerInSystem().getRole().getName().equals("REGION")) {
+            System.out.println(getManagerInSystem().getRole().getName());
+            if (image!=null) {
+                String inspect = attachmentService.convertStreamToString(image.getInputStream());
+                if (inspect.contains("image/")) {
+                    RegionAppropriateDistrict redis = regionAppropriateDistrict(regionRepository.findById(employeeDto.getRegionId()), districtRepository.findById(employeeDto.getDistrictId()));
+                    if (redis.isSuccess()) {
+                        Optional<Company> optionalCompany = companyRepository.findById(employeeDto.getCompanyId());
+                        if (optionalCompany.isPresent()) {
+                            Company company = optionalCompany.get();
+                            if (getManagerInSystem().getCompany().getId() == company.getId()) {
+                                if (!employeeRepository.existsByFullnameAndCompanyId(employeeDto.getFullname(), employeeDto.getCompanyId())) {
+                                    District district = redis.getDistrict();
+                                    Employee employee = new Employee(employeeDto.getFullname(), district, company, employeeDto.getBirthday(), employeeDto.getLavozimivaQachondan());
+                                    EmployeeAdditional employeeAdditional = new EmployeeAdditional(employeeDto.getNationality(),
+                                            employeeDto.getMalumoti(), employeeDto.getMalumotiboyichamutaxasisligi(),
+                                            employeeDto.getIlmiydarajasi(), employeeDto.getIlmiyunvoni(), employeeDto.getChettillari(),
+                                            employeeDto.getDavlatmukofotibilantaqdirlanganligiqanaqa(), employeeDto.getSaylovorganiazosi(),
+                                            employeeDto.getPartiyaviyligi(), employeeDto.getTamomlaganjoyi(), employeeDto.getHarbiyunvoni(), employee);
+
+                                    UploadImageResponse imageResponse = attachmentService.uploadEmployeeImage(image);
+                                    if (imageResponse.getResponse().isSuccess()) {
+                                        employeeRepository.save(employee);
+                                        //  Attachment attachment = new Attachment(image.getOriginalFilename(), image.getContentType(), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
+                                        Attachment attachment = new Attachment(employeeDto.getFullname(), inspect.substring(5, inspect.indexOf(";")), imageResponse.getSavefileimage(), imageResponse.getImageUrl(), employee);
+                                        attachmentRepository.save(attachment);
+                                        List<MehnatFaoliyati> arrayList = new ArrayList<>();
+                                        for (MehnatFaoliyatiDto m : employeeDto.getMehnatfaoliyati()) {
+                                            MehnatFaoliyati mehnatFaoliyati = new MehnatFaoliyati(m.getText(), employee);
+                                            arrayList.add(mehnatFaoliyati);
+                                        }
+                                        mehnatFaoliyatiRepository.saveAll(arrayList);
+                                        employeeAdditionalRepository.save(employeeAdditional);
+                                        for (InformationAboutRelativeDTO i : employeeDto.getAboutRelative()) {
+                                            InformationAboutRelative informationAboutRelative = new InformationAboutRelative(
+                                                    i.getName(), i.getRelativefullname(), i.getBirthdayandbirthofplace(), i.getIshjoyivalavozimi(),
+                                                    i.getTurarjoyi(), employee);
+                                            aboutRelativeRepository.save(informationAboutRelative);
+                                        }
+
+                                        return new ApiResponse("Saqlandi", true);
+                                    } else {
+                                        return imageResponse.getResponse();
+                                    }
+                                } else {
+                                    return new ApiResponse("Bunday fullname bor", false);
+                                }
+                            } else {
+                                return new ApiResponse("Siz xodimni bu companyga qo'shaolmaysiz", false);
+                            }
+                        } else {
+                            return new ApiResponse("Bunday Companiya topilmadi", false);
+                        }
+                    } else {
+                        return new ApiResponse(redis.getMessage(), false);
+                    }
+                } else {
+                    return new ApiResponse("Image tanlanmagan", false);
+                }
+            }else {
                 return new ApiResponse("Image tanlanmagan", false);
             }
         }
@@ -183,7 +196,7 @@ public class EmployeeService {
             return employeeRepository.findAllByFullnameContaining(fullname);
         }
         if (manager.getRole().getName().equals("REGION")) {
-           return employeeRepository.findAllByFullnameContainingAndCompanyId(fullname, manager.getCompany().getId());
+            return employeeRepository.findAllByFullnameContainingAndCompanyId(fullname, manager.getCompany().getId());
         }
         return new ArrayList<>();
     }
@@ -195,7 +208,7 @@ public class EmployeeService {
             return employeeRepository.findByCompany_CompanynameContaining(companyName);
         }
         if (manager.getRole().getName().equals("REGION")) {
-            return employeeRepository.findCompanyNameAndCompanyId(manager.getCompany().getId(),companyName);
+            return employeeRepository.findCompanyNameAndCompanyId(manager.getCompany().getId(), companyName);
         }
         return new ArrayList<>();
     }
@@ -256,7 +269,7 @@ public class EmployeeService {
                                 employeeAdditional.setNationality(employeeDto.getNationality());
                                 employeeAdditional.setPartiyaviyligi(employeeDto.getPartiyaviyligi());
                                 employeeAdditional.setSaylovorganiazosi(employeeDto.getSaylovorganiazosi());
-                  //              employeeAdditional.setMehnatfaoliyati(employeeDto.getMehnatfaoliyati());
+                                //              employeeAdditional.setMehnatfaoliyati(employeeDto.getMehnatfaoliyati());
                                 employeeAdditional.setTamomlaganjoyi(employeeDto.getTamomlaganjoyi());
                                 DeleteImage deleteImage = attachmentService.knowToDelete(employee);
                                 if (deleteImage.getResponse().isSuccess()) {
@@ -265,9 +278,9 @@ public class EmployeeService {
                                     employeeRepository.save(employee);
                                     ApiResponse apiResponse = attachmentService.uploadEmployeeImageEdit(deleteImage.getAttachment(), employee, image);
                                     if (apiResponse.isSuccess()) {
-                                        List<MehnatFaoliyati> arrayList=new ArrayList<>();
-                                        for (MehnatFaoliyatiDto m:employeeDto.getMehnatfaoliyati()) {
-                                            MehnatFaoliyati mehnatFaoliyati=new MehnatFaoliyati(m.getText(),employee);
+                                        List<MehnatFaoliyati> arrayList = new ArrayList<>();
+                                        for (MehnatFaoliyatiDto m : employeeDto.getMehnatfaoliyati()) {
+                                            MehnatFaoliyati mehnatFaoliyati = new MehnatFaoliyati(m.getText(), employee);
                                             arrayList.add(mehnatFaoliyati);
                                         }
                                         mehnatFaoliyatiRepository.deleteAll(mehnatFaoliyatiRepository.findAllByEmployeeId(employeeId));
@@ -349,7 +362,7 @@ public class EmployeeService {
                                         employeeAdditional.setNationality(employeeDto.getNationality());
                                         employeeAdditional.setPartiyaviyligi(employeeDto.getPartiyaviyligi());
                                         employeeAdditional.setSaylovorganiazosi(employeeDto.getSaylovorganiazosi());
-                                     //   employeeAdditional.setMehnatfaoliyati(employeeDto.getMehnatfaoliyati());
+                                        //   employeeAdditional.setMehnatfaoliyati(employeeDto.getMehnatfaoliyati());
                                         employeeAdditional.setTamomlaganjoyi(employeeDto.getTamomlaganjoyi());
                                         DeleteImage deleteImage = attachmentService.knowToDelete(employee);
                                         if (deleteImage.getResponse().isSuccess()) {
@@ -358,9 +371,9 @@ public class EmployeeService {
                                             employeeRepository.save(employee);
                                             ApiResponse apiResponse = attachmentService.uploadEmployeeImageEdit(deleteImage.getAttachment(), employee, image);
                                             if (apiResponse.isSuccess()) {
-                                                List<MehnatFaoliyati> arrayList=new ArrayList<>();
-                                                for (MehnatFaoliyatiDto m:employeeDto.getMehnatfaoliyati()) {
-                                                    MehnatFaoliyati mehnatFaoliyati=new MehnatFaoliyati(m.getText(),employee);
+                                                List<MehnatFaoliyati> arrayList = new ArrayList<>();
+                                                for (MehnatFaoliyatiDto m : employeeDto.getMehnatfaoliyati()) {
+                                                    MehnatFaoliyati mehnatFaoliyati = new MehnatFaoliyati(m.getText(), employee);
                                                     arrayList.add(mehnatFaoliyati);
                                                 }
                                                 mehnatFaoliyatiRepository.deleteAll(mehnatFaoliyatiRepository.findAllByEmployeeId(employeeId));
@@ -457,16 +470,16 @@ public class EmployeeService {
                             i.getBirthdayandbirthofplace(), i.getIshjoyivalavozimi(), i.getTurarjoyi());
                     list1.add(in);
                 }
-                List<MehnatFaoliyatiDto> mehnatFaoliyatiDtos=new ArrayList<>();
-                for (MehnatFaoliyati m:mehnatFaoliyatiRepository.findAllByEmployeeId(id)) {
-                    MehnatFaoliyatiDto mehnatFaoliyatiDto=new MehnatFaoliyatiDto(m.getText());
+                List<MehnatFaoliyatiDto> mehnatFaoliyatiDtos = new ArrayList<>();
+                for (MehnatFaoliyati m : mehnatFaoliyatiRepository.findAllByEmployeeId(id)) {
+                    MehnatFaoliyatiDto mehnatFaoliyatiDto = new MehnatFaoliyatiDto(m.getText());
                     mehnatFaoliyatiDtos.add(mehnatFaoliyatiDto);
                 }
                 Attachment imageUrl = attachmentRepository.getByEmployeeId(id);
-                EmployeeAdditonalDTO employeeAdditonalDTO = new EmployeeAdditonalDTO(list1,e.getNationality(),e.getMalumoti(),
-                        e.getMalumotiboyichamutaxasisligi(),e.getIlmiydarajasi(),e.getIlmiyunvon(),
-                        e.getChettillari(),e.getDavlatmukofotibilantaqdirlanganligiqanaqa(),e.getSaylovorganiazosi(),
-                        e.getPartiyaviyligi(),e.getTamomlaganjoyi(),e.getHarbiyunvoni(),mehnatFaoliyatiDtos,imageUrl.getImageUrl());
+                EmployeeAdditonalDTO employeeAdditonalDTO = new EmployeeAdditonalDTO(list1, e.getNationality(), e.getMalumoti(),
+                        e.getMalumotiboyichamutaxasisligi(), e.getIlmiydarajasi(), e.getIlmiyunvon(),
+                        e.getChettillari(), e.getDavlatmukofotibilantaqdirlanganligiqanaqa(), e.getSaylovorganiazosi(),
+                        e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(), mehnatFaoliyatiDtos, imageUrl.getImageUrl());
 
                 return employeeAdditonalDTO;
 
@@ -485,15 +498,15 @@ public class EmployeeService {
                             i.getBirthdayandbirthofplace(), i.getIshjoyivalavozimi(), i.getTurarjoyi());
                     list1.add(in);
                 }
-                List<MehnatFaoliyatiDto> mehnatFaoliyatiDtos=new ArrayList<>();
-                for (MehnatFaoliyati m:mehnatFaoliyatiRepository.findAllByEmployeeId(id)) {
-                    MehnatFaoliyatiDto mehnatFaoliyatiDto=new MehnatFaoliyatiDto(m.getText());
+                List<MehnatFaoliyatiDto> mehnatFaoliyatiDtos = new ArrayList<>();
+                for (MehnatFaoliyati m : mehnatFaoliyatiRepository.findAllByEmployeeId(id)) {
+                    MehnatFaoliyatiDto mehnatFaoliyatiDto = new MehnatFaoliyatiDto(m.getText());
                     mehnatFaoliyatiDtos.add(mehnatFaoliyatiDto);
                 }
                 Attachment imageUrl = attachmentRepository.getByEmployeeId(id);
                 EmployeeAdditonalDTO employeeAdditonalDTO = new EmployeeAdditonalDTO(list1, e.getNationality(), e.getMalumoti(),
-                        e.getMalumotiboyichamutaxasisligi(), e.getIlmiydarajasi(),e.getIlmiyunvon(), e.getChettillari(), e.getDavlatmukofotibilantaqdirlanganligiqanaqa(),
-                        e.getSaylovorganiazosi(), e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(),mehnatFaoliyatiDtos, imageUrl.getImageUrl());
+                        e.getMalumotiboyichamutaxasisligi(), e.getIlmiydarajasi(), e.getIlmiyunvon(), e.getChettillari(), e.getDavlatmukofotibilantaqdirlanganligiqanaqa(),
+                        e.getSaylovorganiazosi(), e.getPartiyaviyligi(), e.getTamomlaganjoyi(), e.getHarbiyunvoni(), mehnatFaoliyatiDtos, imageUrl.getImageUrl());
                 return employeeAdditonalDTO;
             }
         }
