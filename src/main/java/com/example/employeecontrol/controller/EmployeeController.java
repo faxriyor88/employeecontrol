@@ -1,6 +1,5 @@
 package com.example.employeecontrol.controller;
 
-
 import com.example.employeecontrol.aop.CheckPermission;
 import com.example.employeecontrol.dto.EmployeeAdditonalDTO;
 import com.example.employeecontrol.dto.EmployeeDto;
@@ -38,10 +37,15 @@ public class EmployeeController {
     // DIRECTOR VA REGION XODIM QO'SHISHI
     @CheckPermission(permission = "ADD", permission1 = "ADD_REGION")
     @PostMapping("/addemployee")
-    public ResponseEntity<?> addEmployee(@RequestPart EmployeeDto employeeDto, @RequestPart MultipartFile image) throws IOException {
-        ApiResponse apiResponse = employeeService.addEmployee(employeeDto, image);
+    public ResponseEntity<?> addEmployee(@RequestBody EmployeeDto employeeDto/*, @RequestPart MultipartFile image*/) throws IOException {
+        //  ApiResponse apiResponse = employeeService.addEmployee(employeeDto, image);
 
-        return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.NOT_FOUND).body(apiResponse);
+        // return ResponseEntity.status(apiResponse.isSuccess() ? HttpStatus.CREATED : HttpStatus.NOT_FOUND).body(apiResponse);
+        if (employeeDto != null) {
+            return ResponseEntity.status(201).body(employeeDto.getFullname() + " ishlayapti");
+        } else {
+            return ResponseEntity.status(404).body("Ishlamayapti");
+        }
     }
 
     // DIRECTOR VA REGION XODIMLARNI KO'RISHI
@@ -55,21 +59,23 @@ public class EmployeeController {
 
     //DIRECTOR VA REGION XODIMLARNI QIDIRISHI
     // 1.Ism bo'yicha qidirish
-    @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
+    @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
     @GetMapping("/findbyfullname")
-    public ResponseEntity<?> findByFullName(@RequestParam String fullname){
+    public ResponseEntity<?> findByFullName(@RequestParam String fullname) {
         return ResponseEntity.ok(employeeService.findByName(fullname));
     }
+
     //2.Company bo'yicha qidirish
-    @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
+    @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
     @GetMapping("/findbycompany")
-    public ResponseEntity<?> findByCompany(@RequestParam String companyName){
+    public ResponseEntity<?> findByCompany(@RequestParam String companyName) {
         return ResponseEntity.ok(employeeService.findByCompany(companyName));
     }
+
     //3.Lavozim bo'yicha qidirish
     @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
     @GetMapping("/findbyposition")
-    public ResponseEntity<?> findByPosition(@RequestParam String positionName){
+    public ResponseEntity<?> findByPosition(@RequestParam String positionName) {
         return ResponseEntity.ok(employeeService.findByPosition(positionName));
     }
 
@@ -106,7 +112,7 @@ public class EmployeeController {
     @CheckPermission(permission = "VIEW", permission1 = "VIEW_REGION")
     @GetMapping("/get")
     public String get(HttpServletResponse response) {
-        response.setHeader("Get","ishlayapti");
+        response.setHeader("Get", "ishlayapti");
         System.out.println("GET");
         return "GETISHLADI";
     }
@@ -116,7 +122,7 @@ public class EmployeeController {
     @DeleteMapping("/delete")
     public String delete(HttpServletResponse response) {
         System.out.println("DELETE");
-        response.setHeader("Delete","ishlayapti");
+        response.setHeader("Delete", "ishlayapti");
         return "DELETEISHLADI";
     }
 
@@ -132,10 +138,45 @@ public class EmployeeController {
     @PutMapping("/update")
     public String update(HttpServletResponse response) {
         System.out.println("UPDATE");
-        response.setHeader("Update","ishlayapti");
+        response.setHeader("Update", "ishlayapti");
         return "PUTISHLADI";
     }
 
+
+//    MultipartFile image=null;
+//    EmployeeDto employeeDto = new EmployeeDto();
+//    Iterator<String> fileNames = request.getFileNames();
+//        while (fileNames.hasNext()) {
+//        MultipartFile loginDTO = request.getFile(fileNames.next());
+//        if (loginDTO.getContentType().startsWith("imag")) {
+//            image=loginDTO;
+//        }
+//        if (loginDTO.getContentType().startsWith("appli")){
+//            System.out.println(loginDTO.getContentType()+"sdsd");
+//            Gson gson = new Gson();
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(loginDTO.getInputStream()));
+//            ArrayList<String> list = gson.fromJson(reader, ArrayList.class);
+//
+//            Iterator iterator = list.iterator();
+//            while (iterator.hasNext()) {
+//                String json = gson.toJson(iterator.next());
+//                EmployeeDto employeeDtoreq = gson.fromJson(json, EmployeeDto.class);
+//                employeeDto=employeeDtoreq;
+//                System.out.println(employeeDto.getChettillari());
+//            }
+//        }
+//    }
+//        System.out.println(employeeDto);
+//        if (image!=null){
+//        System.out.println("nullmas");
+//    }
+
+}
+
+
+//package com.example.employeecontrol.controller;
+//
+//
 //import com.example.employeecontrol.aop.CheckPermission;
 //import com.example.employeecontrol.dto.EmployeeAdditonalDTO;
 //import com.example.employeecontrol.dto.EmployeeDto;
@@ -282,40 +323,40 @@ public class EmployeeController {
 //        response.setHeader("Update","ishlayapti");
 //        return "PUTISHLADI";
 //    }
-
-
-//    MultipartFile image=null;
-//    EmployeeDto employeeDto = new EmployeeDto();
-//    Iterator<String> fileNames = request.getFileNames();
-//        while (fileNames.hasNext()) {
-//        MultipartFile loginDTO = request.getFile(fileNames.next());
-//        if (loginDTO.getContentType().startsWith("imag")) {
-//            image=loginDTO;
-//        }
-//        if (loginDTO.getContentType().startsWith("appli")){
-//            System.out.println(loginDTO.getContentType()+"sdsd");
-//            Gson gson = new Gson();
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(loginDTO.getInputStream()));
-//            ArrayList<String> list = gson.fromJson(reader, ArrayList.class);
 //
-//            Iterator iterator = list.iterator();
-//            while (iterator.hasNext()) {
-//                String json = gson.toJson(iterator.next());
-//                EmployeeDto employeeDtoreq = gson.fromJson(json, EmployeeDto.class);
-//                employeeDto=employeeDtoreq;
-//                System.out.println(employeeDto.getChettillari());
-//            }
-//        }
-//    }
-//        System.out.println(employeeDto);
-//        if (image!=null){
-//        System.out.println("nullmas");
-//    }
-
-}
-
-
-
-
-
-
+//
+////    MultipartFile image=null;
+////    EmployeeDto employeeDto = new EmployeeDto();
+////    Iterator<String> fileNames = request.getFileNames();
+////        while (fileNames.hasNext()) {
+////        MultipartFile loginDTO = request.getFile(fileNames.next());
+////        if (loginDTO.getContentType().startsWith("imag")) {
+////            image=loginDTO;
+////        }
+////        if (loginDTO.getContentType().startsWith("appli")){
+////            System.out.println(loginDTO.getContentType()+"sdsd");
+////            Gson gson = new Gson();
+////            BufferedReader reader = new BufferedReader(new InputStreamReader(loginDTO.getInputStream()));
+////            ArrayList<String> list = gson.fromJson(reader, ArrayList.class);
+////
+////            Iterator iterator = list.iterator();
+////            while (iterator.hasNext()) {
+////                String json = gson.toJson(iterator.next());
+////                EmployeeDto employeeDtoreq = gson.fromJson(json, EmployeeDto.class);
+////                employeeDto=employeeDtoreq;
+////                System.out.println(employeeDto.getChettillari());
+////            }
+////        }
+////    }
+////        System.out.println(employeeDto);
+////        if (image!=null){
+////        System.out.println("nullmas");
+////    }
+//
+//}
+//
+//
+//
+//
+//
+//
