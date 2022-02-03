@@ -2,7 +2,6 @@ package com.example.employeecontrol.controller;
 
 import com.example.employeecontrol.dto.LoginDTO;
 import com.example.employeecontrol.jwt.JwtProwider;
-import com.google.gson.Gson;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 import javax.xml.bind.DatatypeConverter;
 

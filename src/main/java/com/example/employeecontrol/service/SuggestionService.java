@@ -60,4 +60,9 @@ public class SuggestionService {
         return new ArrayList<>();
     }
 
+    // All district
+    public List<District> getAllSugDistrict(){
+        return districtRepository.findAll();
+    }
+
 }

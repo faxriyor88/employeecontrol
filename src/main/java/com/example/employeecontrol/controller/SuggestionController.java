@@ -26,6 +26,13 @@ public class SuggestionController {
         return ResponseEntity.ok(suggestionService.getSuggesDistrict(regionid));
     }
 
+    // get all district for suggestion, xodim tug'ilgan joyi uchun
+    @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
+    @GetMapping("/getalldistrict")
+    public ResponseEntity<?> getSugAllDis(){
+        return ResponseEntity.ok(suggestionService.getAllSugDistrict());
+    }
+
     //Director va Region role uchun, Suggestion uchun company olish,xodim ish joyini tanlash uchun
     @CheckPermission(permission = "VIEW",permission1 = "VIEW_REGION")
     @GetMapping("/company")
